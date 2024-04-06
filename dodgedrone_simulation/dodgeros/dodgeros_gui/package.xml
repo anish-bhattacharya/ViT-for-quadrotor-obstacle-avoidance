@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>dodgeros_gui</name>
+    <version>0.0.0</version>
+    <description>The dodgeros_gui package</description>
+
+    <maintainer email="ekaufmann@ifi.uzh.ch">Elia Kaufmann</maintainer>
+    <license>MIT</license>
+
+    <author>Elia Kaufmann</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>geometry_msgs</depend>
+    <depend>nav_msgs</depend>
+    <depend>rospy</depend>
+    <depend>rqt_gui</depend>
+    <depend>rqt_gui_py</depend>
+    <depend>std_msgs</depend>
+
+    <export>
+        <rqt_gui plugin="${prefix}/plugin.xml"/>
+    </export>
+
+</package>

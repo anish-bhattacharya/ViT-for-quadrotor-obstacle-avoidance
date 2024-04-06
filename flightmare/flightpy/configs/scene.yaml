@@ -1,0 +1,15 @@
+scene_0:
+  name: "warehouse"
+  render_offset: [0, 0, 0]
+
+scene_1:
+  name: "street"
+  render_offset: [-9.38, -12.66, 0.1]
+
+scene_2:
+  name: "forest"
+  render_offset: [21, 217, 94]
+
+scene_3:
+  name: "wasteland"
+  render_offset: [1140, 1026, 108]

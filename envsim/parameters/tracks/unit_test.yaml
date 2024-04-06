@@ -1,0 +1,11 @@
+goal_pos: [-1.1, -1.6, 3.6]
+render_offset: [50.0, 50.0, 50.0]
+start_pos:  [-1.15, -1.6, 3.6]
+# 
+gates:
+  Gate1:
+    position: [-2.16, 2.86, 1.02]
+    rotation: [0.9971, 0.0, 0.0, -0.0748]
+    scale: [1.0, 1.0, 1.0]
+    uncertainty: [2.5, 2.5, 0.0, 0.0]
+  N: 1

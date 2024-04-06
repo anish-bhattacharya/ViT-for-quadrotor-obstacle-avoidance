@@ -1,0 +1,10 @@
+kp_rate:  [20.0, 20.0, 5.0]
+kd_rate:  [0.2, 0.2, 0.1]
+ki_rate:  [5.0, 5.0, 1.0]
+
+integration_max:  [5.0, 5.0, 5.0]
+
+# filters for the derivative of body rate
+filter_sampling_frequency:    300   # filter frequency, same as control frequency (Hz)s
+filter_cutoff_frequency:      12    # inner loop filter cut-off frequency (Hz)
+

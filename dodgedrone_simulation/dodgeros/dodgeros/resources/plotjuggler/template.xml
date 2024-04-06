@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root version="2.3.8">
+ <tabbed_widget name="Main Window" parent="main_window">
+  <Tab containers="1" tab_name="Position tracking">
+   <Container>
+    <DockSplitter count="2" orientation="-" sizes="0.746773;0.253227">
+     <DockSplitter count="3" orientation="|" sizes="0.333333;0.333333;0.333333">
+      <DockSplitter count="2" orientation="-" sizes="0.711052;0.288948">
+       <DockArea name="x">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231796.292605" bottom="-3.256773" top="4.884312" right="231806.321793"/>
+         <limitY/>
+         <curve name="/vicon/$quad_name/position/x" color="#bcbd22"/>
+         <curve name="/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/x" color="#1f77b4"/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231796.292605" bottom="-4.769510" top="1.184491" right="231806.291994"/>
+         <limitY/>
+         <curve name="x_reference_error" color="#17becf"/>
+        </plot>
+       </DockArea>
+      </DockSplitter>
+      <DockSplitter count="2" orientation="-" sizes="0.711052;0.288948">
+       <DockArea name="y">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231796.292605" bottom="-6.752851" top="0.164704" right="231806.321793"/>
+         <limitY/>
+         <curve name="/vicon/$quad_name/position/y" color="#ff7f0e"/>
+         <curve name="/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/y" color="#1f77b4"/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231796.292605" bottom="-1.059128" top="1.074452" right="231806.291994"/>
+         <limitY/>
+         <curve name="y_reference_error" color="#9467bd"/>
+        </plot>
+       </DockArea>
+      </DockSplitter>
+      <DockSplitter count="2" orientation="-" sizes="0.711052;0.288948">
+       <DockArea name="z">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231796.292605" bottom="-0.099767" top="4.090449" right="231806.321793"/>
+         <limitY/>
+         <curve name="/vicon/$quad_name/position/z" color="#f14cc1"/>
+         <curve name="/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/z" color="#d62728"/>
+        </plot>
+       </DockArea>
+       <DockArea name="z_tracking_error">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231796.292605" bottom="-0.723319" top="0.211803" right="231806.291994"/>
+         <limitY/>
+         <curve name="z_reference_error" color="#f14cc1"/>
+        </plot>
+       </DockArea>
+      </DockSplitter>
+     </DockSplitter>
+     <DockSplitter count="2" orientation="|" sizes="0.502502;0.497498">
+      <DockArea name="XY">
+       <plot mode="XYPlot" style="Lines">
+        <range left="-13.594131" bottom="-6.752851" top="0.164704" right="15.221670"/>
+        <limitY/>
+        <curve name="/vicon/$quad_name/position/[x;y]" curve_x="/vicon/$quad_name/position/x" curve_y="/vicon/$quad_name/position/y" color="#9467bd"/>
+        <curve name="/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/[x;y]" curve_x="/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/x" curve_y="/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/y" color="#1ac938"/>
+       </plot>
+      </DockArea>
+      <DockArea name="XZ">
+       <plot mode="XYPlot" style="Lines">
+        <range left="-7.873589" bottom="-0.099767" top="4.090449" right="9.501128"/>
+        <limitY/>
+        <curve name="/vicon/$quad_name/position/[x;z]" curve_x="/vicon/$quad_name/position/x" curve_y="/vicon/$quad_name/position/z" color="#17becf"/>
+        <curve name="/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/[x;z]" curve_x="/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/x" curve_y="/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/z" color="#ff7f0e"/>
+       </plot>
+      </DockArea>
+     </DockSplitter>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab containers="1" tab_name="velocity">
+   <Container>
+    <DockSplitter count="1" orientation="-" sizes="1">
+     <DockSplitter count="2" orientation="|" sizes="0.541816;0.458184">
+      <DockArea name="...">
+       <plot mode="TimeSeries" style="Lines">
+        <range left="0.000000" bottom="-14.376242" top="9.008677" right="9.999284"/>
+        <limitY/>
+        <curve name="/$quad_name/dodgeros_pilot/state/velocity/linear/x" color="#f14cc1"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot mode="TimeSeries" style="Lines">
+        <range left="0.000000" bottom="-0.948804" top="7.728949" right="9.999284"/>
+        <limitY/>
+        <curve name="/$quad_name/dodgeros_pilot/state/velocity/linear/y" color="#9467bd"/>
+       </plot>
+      </DockArea>
+     </DockSplitter>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab containers="1" tab_name="orientation">
+   <Container>
+    <DockSplitter count="1" orientation="-" sizes="1">
+     <DockSplitter count="2" orientation="|" sizes="0.500357;0.499643">
+      <DockSplitter count="2" orientation="-" sizes="0.500497;0.499503">
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231784.884175" bottom="-0.678766" top="0.654221" right="231794.881781"/>
+         <limitY/>
+         <curve name="/vicon/$quad_name/orientation/x" color="#bcbd22"/>
+         <curve name="/$quad_name/dodgeros_pilot/telemetry/reference/pose/orientation/x" color="#f14cc1"/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231784.884175" bottom="-0.535998" top="1.001889" right="231794.881781"/>
+         <limitY/>
+         <curve name="/vicon/$quad_name/orientation/w" color="#d62728"/>
+         <curve name="/$quad_name/dodgeros_pilot/telemetry/reference/pose/orientation/w" color="#1ac938"/>
+        </plot>
+       </DockArea>
+      </DockSplitter>
+      <DockSplitter count="2" orientation="-" sizes="0.500497;0.499503">
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231784.884175" bottom="-0.755416" top="0.815261" right="231794.881781"/>
+         <limitY/>
+         <curve name="/vicon/$quad_name/orientation/y" color="#1f77b4"/>
+         <curve name="/$quad_name/dodgeros_pilot/telemetry/reference/pose/orientation/y" color="#9467bd"/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231784.884175" bottom="-0.884834" top="1.042840" right="231794.881781"/>
+         <limitY/>
+         <curve name="/vicon/$quad_name/orientation/z" color="#17becf"/>
+         <curve name="/$quad_name/dodgeros_pilot/telemetry/reference/pose/orientation/z" color="#ff7f0e"/>
+        </plot>
+       </DockArea>
+      </DockSplitter>
+     </DockSplitter>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab containers="1" tab_name="commands">
+   <Container>
+    <DockSplitter count="1" orientation="-" sizes="1">
+     <DockSplitter count="2" orientation="|" sizes="0.500357;0.499643">
+      <DockSplitter count="2" orientation="-" sizes="0.500497;0.499503">
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231791.018044" bottom="-5.501715" top="8.024966" right="231801.002815"/>
+         <limitY/>
+         <curve name="/$quad_name/laird_to_sbus/command/bodyrates/x" color="#17becf"/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231791.018044" bottom="-1.793963" top="2.847213" right="231801.002815"/>
+         <limitY/>
+         <curve name="/$quad_name/laird_to_sbus/command/bodyrates/z" color="#1f77b4"/>
+        </plot>
+       </DockArea>
+      </DockSplitter>
+      <DockSplitter count="2" orientation="-" sizes="0.500497;0.499503">
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231791.018044" bottom="-7.463645" top="6.315067" right="231801.002815"/>
+         <limitY/>
+         <curve name="/$quad_name/laird_to_sbus/command/bodyrates/y" color="#bcbd22"/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot mode="TimeSeries" style="Lines">
+         <range left="231791.018044" bottom="-1.014088" top="42.895521" right="231801.002815"/>
+         <limitY/>
+         <curve name="/$quad_name/laird_to_sbus/command/collective_thrust" color="#d62728"/>
+        </plot>
+       </DockArea>
+      </DockSplitter>
+     </DockSplitter>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <currentTabIndex index="0"/>
+ </tabbed_widget>
+ <use_relative_time_offset enabled="1"/>
+ <!-- - - - - - - - - - - - - - - -->
+ <!-- - - - - - - - - - - - - - - -->
+ <Plugins>
+  <plugin ID="DataLoad CSV">
+   <default time_axis=""/>
+  </plugin>
+  <plugin ID="DataLoad ROS bags">
+   <use_header_stamp value="false"/>
+   <use_renaming_rules value="true"/>
+   <discard_large_arrays value="true"/>
+   <max_array_size value="100"/>
+  </plugin>
+  <plugin ID="DataLoad ULog"/>
+  <plugin ID="MQTT Subscriber"/>
+  <plugin ID="ROS Topic Subscriber">
+   <use_header_stamp value="false"/>
+   <use_renaming_rules value="true"/>
+   <discard_large_arrays value="true"/>
+   <max_array_size value="100"/>
+  </plugin>
+  <plugin ID="UDP Server"/>
+  <plugin ID="WebSocket Server"/>
+  <plugin ID="ZMQ Subscriber"/>
+  <plugin ID="ROS /rosout Visualization" status="idle"/>
+  <plugin ID="ROS Topic Re-Publisher" status="idle"/>
+ </Plugins>
+ <!-- - - - - - - - - - - - - - - -->
+ <previouslyLoaded_Datafiles>
+  <fileInfo prefix="" filename="/home/robert/Downloads/agi_rosbags/ta_master_newthrust_33_8N_2021-01-08-18-01-10.bag">
+   <selected_datasources value="/$quad_name/dodgeros_pilot/state;/$quad_name/dodgeros_pilot/telemetry;/$quad_name/dodgeros_pilot/trajectory;/$quad_name/laird_to_sbus/command;/vicon/$quad_name"/>
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <use_renaming_rules value="true"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+   </plugin>
+  </fileInfo>
+ </previouslyLoaded_Datafiles>
+ <previouslyLoaded_Streamer name="ROS Topic Subscriber"/>
+ <!-- - - - - - - - - - - - - - - -->
+ <customMathEquations>
+  <snippet name="z_reference_error">
+   <global></global>
+   <function>return value-v1</function>
+   <linkedSource>/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/z</linkedSource>
+   <additionalSources>
+    <v1>/vicon/$quad_name/position/z</v1>
+   </additionalSources>
+  </snippet>
+  <snippet name="x_reference_error">
+   <global></global>
+   <function>return value-v1</function>
+   <linkedSource>/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/x</linkedSource>
+   <additionalSources>
+    <v1>/vicon/$quad_name/position/x</v1>
+   </additionalSources>
+  </snippet>
+  <snippet name="y_reference_error">
+   <global></global>
+   <function>return value-v1</function>
+   <linkedSource>/$quad_name/dodgeros_pilot/telemetry/reference/pose/position/y</linkedSource>
+   <additionalSources>
+    <v1>/vicon/$quad_name/position/y</v1>
+   </additionalSources>
+  </snippet>
+ </customMathEquations>
+ <snippets/>
+ <!-- - - - - - - - - - - - - - - -->
+</root>
+
