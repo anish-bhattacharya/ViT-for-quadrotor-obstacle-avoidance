@@ -35,8 +35,8 @@ rgb_camera:
   enable_opticalflow: no
 
 unity:
-  scene_id: 0 # 0 warehouse, 1 street, 2 forest, 3 wasteland
-  render: no 
+  scene_id: 2 # 0 empty, 1 industrial, 2 warehouse, 3 forest
+  render: no
 
 simulation:
   seed: 10

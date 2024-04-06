@@ -118,6 +118,8 @@ class VisionEnv final : public EnvBase {
 
   /******************************/
 
+  // whether environment is type 'trees'
+  bool is_trees_ = false;
 
   std::unordered_map<std::string, float> extra_info_;
 
