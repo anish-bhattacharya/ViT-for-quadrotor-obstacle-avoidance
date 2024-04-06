@@ -18,6 +18,20 @@ cd ViT-for-quadrotor-obstacle-avoidance
 ./setup_ros.bash
 catkin build
 ```
+# Change Environments
+Download the binary and put it in 
+```
+flightmare/flightrender/*.x86_64
+```
+Set the file name in `envsim/launch/visionenv_sim.launch`. 
+Run the following commands
+```
+find . -name "CMakeCache.txt" -exec rm -rf {} +
+find . -name "CMakeFiles" -type d -exec rm -rf {} +
+catkin build
+```
+You are all set. Make sure you have the environments and configs updated!
 
 # TODO
 train_set, config and the output dirs have to be created before the first launch
+
