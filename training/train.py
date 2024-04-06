@@ -1,44 +1,41 @@
-# a simple learner that learns a depthim -> action mapping
-# Anish Bhattacharya, 2023
+"""
+@authors: A Bhattacharya
+@organization: GRASP Lab, University of Pennsylvania
+@date: ...
+@license: ...
 
-# NOTE you might need to unset PYTHONPATH
+@brief: This module contains the training routine that was used in the paper "Utilizing vision transformer models for end-to-end vision-based
+quadrotor obstacle avoidance" by Bhattacharya, et. al
+"""
 
-import glob, os, sys
+import os, sys
 from os.path import join as opj
 import numpy as np
 import torch
 from datetime import datetime
 import time
 from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
-
-import matplotlib.pyplot as plt
+import torch.nn as nn
+import torch.nn.functional as F
 
 from dataloading import *
-from modelNoMeta import *
-# from model import *
+folder_path = os.path.join(os.path.dirname(__file__), 'models')
+sys.path.insert(0, folder_path)
+import model as network
 
 # NOTE this suppresses tensorflow warnings and info
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 import getpass
 uname = getpass.getuser()
 
-# a class that trains an LSTM to predict actions from depth images
-# LearnerLSTM can be loaded in two ways:
+# a class that trains an network to predict actions from depth images
+# trainer can be loaded in two ways:
 # 1. just for dataloading, in which case dataset_name is provided and usually no_model=True, or
 # 2. for model training, in which case just args is provided
-class LearnerLSTM:
-    def __init__(self, args=None, dataset_name=None, short=0, no_model=False):
-        
-        ################
-        ## Parameters ##
-        ################
-
+class TRAINER:
+    def __init__(self, args=None):
         self.args = args
-
         if self.args is not None:
-
             self.device = args.device
             self.basedir = args.basedir
             self.logdir = args.logdir
@@ -59,31 +56,9 @@ class LearnerLSTM:
             self.lr_decay = args.lr_decay
             self.save_model_freq = args.save_model_freq
             self.val_freq = args.val_freq
-            self.optional_loss_param = args.optional_loss_param
 
         else:
-
-            self.device = 'cuda' if not no_model else 'cpu'
-            self.basedir = f'/home/{uname}/agile_ws/src/agile_flight'
-            self.logdir = 'learner/logs'
-            self.datadir = '../../data/datasets'
-            self.ws_suffix = ''
-            self.dataset_name = dataset_name
-            self.short = short
-
-            self.model_type = 'LSTMNet'
-            self.num_lstm_layers = 5
-            self.val_split = 0.5
-            self.seed = None
-            self.load_checkpoint = False
-            self.checkpoint_path = None
-            self.lr = 1e-5
-            self.N_eps = 500
-            self.lr_warmup_epochs = 5
-            self.lr_decay = False
-            self.save_model_freq = 25
-            self.val_freq = 10
-            self.optional_loss_param = False
+            raise Exception("Args are not provided")
 
 
         assert self.dataset_name is not None, 'Dataset name not provided, neither through args nor through dataset_name kwarg'
@@ -141,45 +116,32 @@ class LearnerLSTM:
         self.num_val_steps = self.val_trajlength.shape[0]
         self.lr_warmup_iters = self.lr_warmup_epochs * self.num_training_steps
 
-        if not no_model:
+        ##################################
+        ## Define network and optimizer ##
+        ##################################
 
-            # self.num_training_steps = self.train_meta.shape[0]
+        self.mylogger('[SETUP] Establishing model and optimizer.')
+        if self.model_type == 'LSTMNet':
+            self.model = network.LSTMNet().to(self.device).float()
+        elif self.model_type == 'ConvNet':
+            self.model = network.ConvNet().to(self.device).float()
+        elif self.model_type == 'vit':            
+            self.model = network.ViT().to(self.device).float()
+        elif self.model_type == 'vitlstm':
+            self.model = network.LSTMNetVIT().to(self.device).float()
+        elif self.model_type == 'UNet':
+            self.model = network.UNetConvLSTMNet().to(self.device).float()
+        else:
+            self.mylogger(f'[SETUP] Invalid model_type {self.model_type}. Exiting.')
+            exit()
 
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
 
-            ##################################
-            ## Define network and optimizer ##
-            ##################################
+        self.num_eps_trained = 0
+        if self.load_checkpoint:
+            self.load_from_checkpoint(self.checkpoint_path)
 
-            self.mylogger('[SETUP] Establishing model and optimizer.')
-            if self.model_type == 'LSTMNet':
-                # self.model = UNetConv().to(self.device).float()
-                self.model = LSTMNet().to(self.device).float()
-                # self.model = ConvLSTMMLP().to(self.device).float()
-                print(sum(p.numel() for p in self.model.parameters() if p.requires_grad))
-            elif self.model_type == 'ConvNet':
-                # self.model = UNetConvLSTM().to(self.device).float()
-                self.model = ConvNet().to(self.device).float()
-                print(sum(p.numel() for p in self.model.parameters() if p.requires_grad))
-            elif self.model_type == 'vit':
-                # self.model = ViT().to(self.device).float()#LSTMNetVIT
-                
-                self.model = LSTMNetVIT().to(self.device).float()#LSTMNetVIT
-                print(sum(p.numel() for p in self.model.parameters() if p.requires_grad))
-
-                # raise Exception("")
-
-            else:
-                self.mylogger(f'[SETUP] Invalid model_type {self.model_type}. Exiting.')
-                exit()
-
-            # optimizer = torch.optim.SGD(model.parameters(), lr=5e-6, momentum=0.9)
-            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
-
-            self.num_eps_trained = 0
-            if self.load_checkpoint:
-                self.load_from_checkpoint(self.checkpoint_path)
-
-            self.total_its = self.num_eps_trained * self.num_training_steps
+        self.total_its = self.num_eps_trained * self.num_training_steps
 
     def mylogger(self, msg):
         print(msg)
@@ -193,8 +155,6 @@ class LearnerLSTM:
             self.mylogger(f'[SETUP] Could not parse number of epochs trained from checkpoint path {checkpoint_path}, using 0')
         self.mylogger(f'[SETUP] Loading checkpoint from {checkpoint_path}, already trained for {self.num_eps_trained} epochs')
         self.model.load_state_dict(torch.load(checkpoint_path, map_location=self.device))
-        # TODO should this be done???
-        # self.optimizer.load_state_dict(torch.load(checkpoint_path.replace('model', 'optimizer')))
 
     def dataloader(self, val_split, short=0, seed=None, train_val_dirs=None):
         self.mylogger(f'[DATALOADER] Loading from {self.dataset_dir}')
@@ -266,46 +226,20 @@ class LearnerLSTM:
 
             ### Training loop ###
             self.model.train()
-            lossFn = nn.HuberLoss(delta=0.5)
-
-
             for it in range(self.num_training_steps):
-
                 self.optimizer.zero_grad()
-
-                # use first known velocity command as the hidden state initialization
-                # init_hidden_state = torch.rand(self.model.lstm.num_layers, 1, 3).to(self.device).float()
-                # init_hidden_state[0] = self.train_velcmd[train_traj_starts[it], :].view(1, 1, -1)
-                # init_cell_state = torch.rand(self.model.lstm.num_layers, 1, 3).to(self.device).float()
-
-                # form sequential input of trajlength to model (not batchified)
                 traj_input = self.train_ims[train_traj_starts[it]+1 : train_traj_starts[it]+train_traj_lengths[it], :, :].unsqueeze(1) #1, traj, 
-                # traj_prev = (self.train_ims[train_traj_starts[it]+1 : train_traj_starts[it]+train_traj_lengths[it]-1, :, :].unsqueeze(1)).clone() #1, traj, 
-
                 desvel = self.train_desvel[train_traj_starts[it]+1 : train_traj_starts[it]+train_traj_lengths[it]].view(-1, 1)
-
-                if 1:
-                    # print(traj_input.shape, traj_prev.shape, desvel.shape)
-                    # try:
-                    currquat = self.train_currquat[train_traj_starts[it]+1 : train_traj_starts[it]+train_traj_lengths[it]]
-                    pred, _ = self.model([traj_input, desvel, currquat]) #, (init_hidden_state, init_cell_state)])
-                    # except:
-                    #     breakpoint()
-                    cmd = self.train_velcmd[train_traj_starts[it]+1 : train_traj_starts[it]+train_traj_lengths[it], :]
-
-                    cmd_norm = cmd / desvel # normalize each row by each desvel element
-                    cmd_norm = cmd_norm
-
-                    loss = F.mse_loss(cmd_norm, pred) #+ torch.mean(torch.abs(torch.diff(cmd_norm[:,1:], axis=0)))*1e-3
-                    # weight = torch.Tensor([[1,3.0,3.0]]) 
-                    # loss = self.weighted_mse_loss(cmd_norm, pred, weight) # + torch.mean(torch.abs(cmd_norm[:,1:]))*1000
-
-                    ep_loss += loss
-
-                    loss.backward()
+                currquat = self.train_currquat[train_traj_starts[it]+1 : train_traj_starts[it]+train_traj_lengths[it]]
+                pred, _ = self.model([traj_input, desvel, currquat]) #, (init_hidden_state, init_cell_state)])
+                cmd = self.train_velcmd[train_traj_starts[it]+1 : train_traj_starts[it]+train_traj_lengths[it], :]
+                cmd_norm = cmd / desvel # normalize each row by each desvel element
+                cmd_norm = cmd_norm
+                loss = F.mse_loss(cmd_norm, pred)
+                ep_loss += loss
+                loss.backward()
                 gradnorm += torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=torch.inf)
                 self.optimizer.step()
-
                 new_lr = self.lr_scheduler(self.total_its-self.num_eps_trained*self.num_training_steps)
                 for param_group in self.optimizer.param_groups:
                     param_group['lr'] = new_lr
@@ -344,24 +278,17 @@ class LearnerLSTM:
             self.model.eval()
 
             for it in range(self.num_val_steps):
-
                 # init_hidden_state = torch.rand(self.model.lstm.num_layers, 1, 3).to(self.device).float()
                 # init_hidden_state[0] = self.train_velcmd[val_traj_starts[it], :].view(1, 1, -1)
                 # init_cell_state = torch.rand(self.model.lstm.num_layers, 1, 3).to(self.device).float()
 
                 traj_input = self.val_ims[val_traj_starts[it]+1 : val_traj_starts[it]+self.val_trajlength[it], :, :].unsqueeze(1)
-
                 desvel = self.val_desvel[val_traj_starts[it]+1 : val_traj_starts[it]+self.val_trajlength[it]].view(-1, 1)
-                currquat = self.train_currquat[val_traj_starts[it]+1 : val_traj_starts[it]+self.val_trajlength[it]]
-
+                currquat = self.val_currquat[val_traj_starts[it]+1 : val_traj_starts[it]+self.val_trajlength[it]]
                 pred, _ = self.model([traj_input, desvel, currquat]) #, (init_hidden_state, init_cell_state)])
-
                 cmd = self.val_velcmd[val_traj_starts[it]+1 : val_traj_starts[it]+self.val_trajlength[it], :]
-
                 cmd_norm = cmd / desvel # normalize each row by each desvel element
-
                 loss = F.mse_loss(cmd_norm, pred)
-
                 ep_loss += loss
 
             ep_loss /= (it+1)
@@ -396,11 +323,6 @@ def argparsing():
     parser.add_argument('--lr_decay', action='store_true', default=False, help='whether to use lr_decay, hardcoded to exponentially decay to 0.01 * lr by end of training')
     parser.add_argument('--save_model_freq', type=int, default=25, help='frequency with which to save model checkpoints')
     parser.add_argument('--val_freq', type=int, default=10, help='frequency with which to evaluate on validation set')
-    parser.add_argument('--optional_loss_param', action='store_true', default=False, help='whether to use some optional loss param, changeable in code')
-    parser.add_argument('--num_lstm_layers', type=int, default=5, help='number of lstm layers to use in LSTM architecture')
-
-    # evaluationPlots args
-    # parser.add_argument('--models', nargs='+', type=str, default=None, help='an unformatted list of model names to evaluate')
 
     args = parser.parse_args()
     print(f'[CONFIGARGPARSE] Parsing args from config file {args.config}')
@@ -413,5 +335,5 @@ if __name__ == '__main__':
     args = argparsing()
     print(args)
 
-    learner = LearnerLSTM(args)
+    learner = TRAINER(args)
     learner.train()

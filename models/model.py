@@ -13,7 +13,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import LSTM
 import torch.nn.utils.spectral_norm as spectral_norm
-import torch.nn.functional as F
 from ViTsubmodules import *
 
 class ConvNet(nn.Module):
