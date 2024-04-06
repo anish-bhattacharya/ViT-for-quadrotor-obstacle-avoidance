@@ -1,185 +1,30 @@
-import glob, os, sys, time
-from os.path import join as opj
-import csv
-import numpy as np
-import torch
-import random
-import getpass
-from scipy.spatial.transform import Rotation
-uname = getpass.getuser()
-# sys.path.append(f'/home/{uname}/agile_ws/src/agile_flight/envtest/ros')
-sys.path.append(r'D:/agile_flight/envtest/ros')
-from dataModify import centerHorizon
+"""
+@authors: A Bhattacharya
+@organization: GRASP Lab, University of Pennsylvania
+@date: ...
+@license: ...
+
+@brief: This module contains the dataloading routine that was used in the paper "Utilizing vision transformer models for end-to-end vision-based
+quadrotor obstacle avoidance" by Bhattacharya, et. al
+"""
+
 import cv2
-
-# def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
-#     cropHeight = 60
-#     cropWidth = 90
-
-#     trnfrm = centerHorizon(fov=150, width=640, height=480)
-
-#     if train_val_dirs is not None:
-
-#         # set traj_folders to the inputted train_val_dirs
-#         traj_folders = train_val_dirs[0] + train_val_dirs[1]
-#         val_split = len(train_val_dirs[1]) / len(traj_folders)
-
-#     else:
-
-#         traj_folders = sorted(glob.glob(opj(data_dir, '*')))
-#         random.seed(seed)
-#         random.shuffle(traj_folders)
-
-#     if short > 0:
-#         assert short <= len(traj_folders), f"short={short} is greater than the number of folders={len(traj_folders)}"
-#         traj_folders = traj_folders[:short]
-#     desired_vels = []
-
-#     traj_ims_full = []
-#     traj_meta_full = []
-
-#     # npy or png
-#     is_png = len(glob.glob(opj(traj_folders[0], '*.png'))) > 0
-#     print(f"[DATALOADER] Image files are {'png' if is_png else 'npy'}")
-
-#     start_dataloading = time.time()
-
-#     for i, traj_folder in enumerate(traj_folders):
-
-#         corruptImg = 0
-#         if len(traj_folders)//10 > 0 and i % (len(traj_folders)//10) == 0:
-#             print(f'[DATALOADER] Loading folder {os.path.basename(traj_folder)}, folder # {i+1}/{len(traj_folders)}, time elapsed {time.time()-start_dataloading:.2f}s')
-#         im_files = sorted(glob.glob(opj(traj_folder, '*.png' if is_png else '*.npy')))
-
-#         # check for empty folder
-#         if len(im_files) == 0:
-#             print(f'[DATALOADER] No images in {os.path.basename(traj_folder)}, skipping')
-#             continue
-
-#         csv_file = 'data.csv'
-#         # float64 is required to read ros timestamps without rounding
-#         # NOTE not sure if float64 will break training (torch dtypes)
-#         traj_meta = np.genfromtxt(opj(traj_folder, csv_file), delimiter=',', dtype=np.float64)[1:]
-
-#         # check for collisions in trajectory
-#         if traj_meta[:,-1].sum() > 0:
-#             print(f'[DATALOADER] Collision in {os.path.basename(traj_folder)}, skipping')
-#             continue
-
-#         # check for nan in metadata
-#         if np.isnan(traj_meta).any():
-#             # print(f'[DATALOADER] NaN in {os.path.basename(traj_folder)}, skipping')
-#             traj_meta = traj_meta[:,:-1]
-
-#         # read png files and scale them by 255.0 to recover normalized (0, 1) range
-#         # for npy files, manually normalize them by a set value (0.09 for "old" dataset)
-#         if is_png:
-#             traj_ims = np.asarray([cv2.imread(im_file, cv2.IMREAD_GRAYSCALE) for im_file in im_files], dtype=np.float32) / 255.0
-#         else:
-#             traj_ims = np.asarray([np.load(im_file, allow_pickle=True) for im_file in im_files]) / 0.09
-
-#         # check for mismatch in number of images and telemetry entries
-#         if traj_ims.shape[0] != traj_meta.shape[0]:
-
-#             # usually the last image may not have a corresponding line of telemetry, so check specifically for that case
-#             last_im_timestamp = os.path.basename(im_files[-1])[:-4]
-#             if float(last_im_timestamp) > traj_meta[-1, 1]:
-#                 traj_ims = traj_ims[:-1]
-#                 print(f'[DATALOADER] Extra image found at end of data, cutting it from {os.path.basename(traj_folder)}')
-#             if traj_ims.shape[0] != traj_meta.shape[0]:
-#                 print(f'[DATALOADER] Number of images and telemetry still do not match in {os.path.basename(traj_folder)}, skipping')
-#                 continue
-#         """
-#         temp = [np.array(trnfrm.doStuff(img, traj_meta[j, range(3,7) if is_png else range(2,6)], cropWidth, cropHeight)[0]) for j, img in enumerate(traj_ims) if len(img.shape) > 0]  # Filtering the images if they are not corrupted
-#         # temp = [np.array(i) for j,i in enumerate(traj_ims) if len(i.shape)>0]  #Filtering the images if they are not corrupted
-#         # Finding the number of corrupt images
-#         corruptImg = int(traj_ims.shape[0])-len(temp)
-#         # We might have missed the first image due to bad cam stream -> if more than one image corrupted then something is wrong
-#         if corruptImg > 1:
-#             print(f"[DATALOADER] Corrupted Images: {corruptImg}")
-#         """
-#         temp = []
-#         for i, img in enumerate(traj_ims):
-#             temp.append(cv2.resize(img, (90, 60)))
-
-#         # Convert the list to array
-#         traj_ims = np.array(temp)
-
-#         # fill finalVel list of desired velocities
-#         for ii in range(traj_meta.shape[0]):
-#             if is_png:
-#                 desired_vels.append(traj_meta[ii, 2])
-#             else:
-#                 desired_vels.append(np.max(traj_meta[:, 12])) # approximate desired vel from max vel in x vel cmd
-
-#         try:
-#             traj_ims_full.append(traj_ims)
-#             traj_meta_full.append(traj_meta)
-#         except:
-#             print(f'[DATALOADER] {traj_ims.shape}')
-#             print(f"[DATALOADER] Suspected empty image, folder {os.path.basename(traj_folder)}")
-
-#     traj_lengths = np.array([traj_ims.shape[0] for traj_ims in traj_ims_full])
-#     traj_ims_full = np.concatenate(traj_ims_full).reshape(-1, cropHeight, cropWidth)
-#     traj_meta_full = np.concatenate(traj_meta_full).reshape(-1, traj_meta.shape[-1])
-#     desired_vels = np.array(desired_vels)
-
-#     # make train-val split (relies on earlier shuffle of traj_folders to randomize selection)
-#     num_val_trajs = int(val_split * len(traj_lengths))
-#     val_idx = np.sum(traj_lengths[:num_val_trajs], dtype=np.int32)
-#     traj_meta_val = traj_meta_full[:val_idx]
-#     traj_meta_train = traj_meta_full[val_idx:]
-#     traj_ims_val = traj_ims_full[:val_idx]
-#     traj_ims_train = traj_ims_full[val_idx:]
-#     traj_lengths_val = traj_lengths[:num_val_trajs]
-#     traj_lengths_train = traj_lengths[num_val_trajs:]
-#     desired_vels_val = desired_vels[:val_idx]
-#     desired_vels_train = desired_vels[val_idx:]
-
-#     # Note, we return the is_png flag since it indicates old vs new datasets, which indicates how to parse the metadata
-#     # We also return the traj_folder names for train and val sets, so that they can be saved and later used to specifically generate evaluate plots on each set
-#     return (traj_meta_train, traj_ims_train, traj_lengths_train, desired_vels_train), (traj_meta_val, traj_ims_val, traj_lengths_val, desired_vels_val), is_png, (traj_folders[num_val_trajs:], traj_folders[:num_val_trajs])
-
-# def parse_meta_str(meta_str):
-
-#     meta = torch.zeros_like(meta_str)
-
-#     meta_str
-
-#     return meta
-
-
-# def preload(items, device='cpu'):
-
-#     return [torch.from_numpy(item).to(device).float() for item in items]
-
-
-import glob, os, sys, time
+import glob, os, time
 from os.path import join as opj
-import csv
 import numpy as np
 import torch
 import random
 import getpass
 uname = getpass.getuser()
-sys.path.append(f'/home/{uname}/Downloads/Softwares/build/catkin_ws/src/agile_flight/envtest/ros')
-from dataModify import centerHorizon
-import cv2
 
 def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
     cropHeight = 60
     cropWidth = 90
 
-    trnfrm = centerHorizon(fov=150, width=640, height=480)
-
     if train_val_dirs is not None:
-
-        # set traj_folders to the inputted train_val_dirs
         traj_folders = train_val_dirs[0] + train_val_dirs[1]
         val_split = len(train_val_dirs[1]) / len(traj_folders)
-
     else:
-
         traj_folders = sorted(glob.glob(opj(data_dir, '*')))
         random.seed(seed)
         random.shuffle(traj_folders)
@@ -188,16 +33,9 @@ def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
         assert short <= len(traj_folders), f"short={short} is greater than the number of folders={len(traj_folders)}"
         traj_folders = traj_folders[:short]
     desired_vels = []
-
     traj_ims_full = []
     traj_meta_full = []
-
-    #curr_vels = []
-    curr_quats = []
-    #curr_ctbr = []
-    # npy or png
-    is_png = len(glob.glob(opj(traj_folders[0], '*.png'))) > 0
-    print(f"[DATALOADER] Image files are {'png' if is_png else 'npy'}")
+    curr_quats = []    
 
     start_dataloading = time.time()
 
@@ -205,15 +43,11 @@ def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
     skippedFolders = 0
     collisionImages = 0
     collisionFolders = 0
-    validImages = 0
-    validFolders = 0
 
     for i, traj_folder in enumerate(traj_folders):
-
-        corruptImg = 0
         if len(traj_folders)//10 > 0 and i % (len(traj_folders)//10) == 0:
             print(f'[DATALOADER] Loading folder {os.path.basename(traj_folder)}, folder # {i+1}/{len(traj_folders)}, time elapsed {time.time()-start_dataloading:.2f}s')
-        im_files = sorted(glob.glob(opj(traj_folder, '*.png' if is_png else '*.npy')))
+        im_files = sorted(glob.glob(opj(traj_folder, '*.png')))
 
         # check for empty folder
         if len(im_files) == 0:
@@ -241,10 +75,7 @@ def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
 
         # read png files and scale them by 255.0 to recover normalized (0, 1) range
         # for npy files, manually normalize them by a set value (0.09 for "old" dataset)
-        if is_png:
-            traj_ims = np.asarray([cv2.imread(im_file, cv2.IMREAD_GRAYSCALE) for im_file in im_files], dtype=np.float32) / 255.0
-        else:
-            traj_ims = np.asarray([np.load(im_file, allow_pickle=True) for im_file in im_files]) / 0.09
+        traj_ims = np.asarray([cv2.imread(im_file, cv2.IMREAD_GRAYSCALE) for im_file in im_files], dtype=np.float32) / 255.0
 
         # check for mismatch in number of images and telemetry entries
         if traj_ims.shape[0] != traj_meta.shape[0]:
@@ -259,42 +90,14 @@ def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
                 skippedFolders += 1
                 skippedImages += int(len(traj_meta[:,0]))
                 continue
-        '''
-        temp = [np.array(trnfrm.doStuff(img, traj_meta[j, range(3,7) if is_png else range(2,6)], cropWidth, cropHeight)[0]) for j, img in enumerate(traj_ims) if len(img.shape) > 0]  # Filtering the images if they are not corrupted
-        # temp = [np.array(i) for j,i in enumerate(traj_ims) if len(i.shape)>0]  #Filtering the images if they are not corrupted
-        # Finding the number of corrupt images
-        corruptImg = int(traj_ims.shape[0])-len(temp)
-        # We might have missed the first image due to bad cam stream -> if more than one image corrupted then something is wrong
-        if corruptImg > 1:
-            print(f"[DATALOADER] Corrupted Images: {corruptImg}")
-        # Convert the list to array
-        traj_ims = np.array(temp)
-        '''
-        # print(f'[DATALOADER] Resizing input images to {[60,90]}')
-        #print(type(traj_ims))
-        #print(traj_ims[0].shape)
-        temp = [cv2.resize(img, (90, 60)) for img in traj_ims]
-        # for i, img in enumerate(traj_ims):
-        #     temp.append()
+        temp = [cv2.resize(img, (cropWidth, cropHeight)) for img in traj_ims]
 
         traj_ims = np.array(temp)
-        # fill finalVel list of desired velocities
         for ii in range(traj_meta.shape[0]):
-            if is_png:
-                desired_vels.append(traj_meta[ii, 2])
-                #curr_vels.append(traj_meta[ii, 10:13])
-                q = traj_meta[ii, 3:7]
-                rmat = q #Rotation.from_quat([q[1],q[2],q[3],q[0]]).as_matrix().flatten()
-                curr_quats.append(rmat)
-                #curr_ctbr.append(traj_meta[ii, 16:20])
-            else:
-                desired_vels.append(np.max(traj_meta[:, 12])) # approximate desired vel from max vel in x vel cmd
-                #curr_vels.append(traj_meta[ii, 10:13])
-                q = traj_meta[ii, 3:7]
-                rmat = q #Rotation.from_quat([q[1],q[2],q[3],q[0]]).as_matrix().flatten()
-                curr_quats.append(rmat)
-                #curr_ctbr.append(traj_meta[ii, 16:20])
-
+            desired_vels.append(traj_meta[ii, 2])
+            q = traj_meta[ii, 3:7]
+            rmat = q 
+            curr_quats.append(rmat)
         try:
             traj_ims_full.append(traj_ims)
             traj_meta_full.append(traj_meta)
@@ -310,7 +113,6 @@ def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
     traj_ims_full = np.concatenate(traj_ims_full).reshape(-1, cropHeight, cropWidth)
     traj_meta_full = np.concatenate(traj_meta_full).reshape(-1, traj_meta.shape[-1])
     desired_vels = np.array(desired_vels)
-    #curr_vels = np.array(curr_vels)
     curr_quats = np.array(curr_quats)
 
 
@@ -322,29 +124,13 @@ def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
     stats_ctbr[2, :] = np.mean(traj_meta_full[:, 18]), np.std(traj_meta_full[:, 18])
     stats_ctbr[3, :] = np.mean(traj_meta_full[:, 19]), np.std(traj_meta_full[:, 19])
 
-    np.savetxt("stats_ctbr_1-1.txt", stats_ctbr)
-    print("[ANALYZER] Saved to stats_ctbr_1-1.txt!")
-
-    print("[ANALYZER] Normalizing CTBR data....")
     traj_meta_full[:, 16] = (traj_meta_full[:, 16] - stats_ctbr[0, 0]) / (2 * stats_ctbr[0, 1])
     traj_meta_full[:, 17] = (traj_meta_full[:, 17] - stats_ctbr[1, 0]) / (2 * stats_ctbr[1, 1])
     traj_meta_full[:, 18] = (traj_meta_full[:, 18] - stats_ctbr[2, 0]) / (2 * stats_ctbr[2, 1])
     traj_meta_full[:, 19] = (traj_meta_full[:, 19] - stats_ctbr[3, 0]) / (2 * stats_ctbr[3, 1])
 
-    print("============= STATS DATA ===============")
-    print(f"CT: Min: {np.min(traj_meta_full[:, 16])}, Max: {np.max(traj_meta_full[:, 16])}, Mean: {stats_ctbr[0, 0]}, Std: {stats_ctbr[0, 1]}")
-    print(f"BRx: Min: {np.min(traj_meta_full[:, 17])}, Max: {np.max(traj_meta_full[:, 17])}, Mean: {stats_ctbr[1, 0]}, Std: {stats_ctbr[1, 1]}")
-    print(f"BRy: Min: {np.min(traj_meta_full[:, 18])}, Max: {np.max(traj_meta_full[:, 18])}, Mean: {stats_ctbr[2, 0]}, Std: {stats_ctbr[2, 1]}")
-    print(f"BRz: Min: {np.min(traj_meta_full[:, 19])}, Max: {np.max(traj_meta_full[:, 19])}, Mean: {stats_ctbr[3, 0]}, Std: {stats_ctbr[3, 1]}")
-    print("========================================")
-    print()
-
     
     curr_ctbr = traj_meta_full[:, 16:20]
-
-    #print(traj_meta_full.shape)
-    #print(traj_meta_full[0, :])
-    print("[ANALYZER] Analyzing the data....")
 
     #Col: mean, std
     #row: ct. brx/y/z
@@ -354,22 +140,10 @@ def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
     stats_ctbr[2, :] = np.mean(traj_meta[:, 18]), np.std(traj_meta[:, 18])
     stats_ctbr[3, :] = np.mean(traj_meta[:, 19]), np.std(traj_meta[:, 19])
 
-    np.savetxt("stats_ctbr_1-1.txt", stats_ctbr)
-    print("[ANALYZER] Saved to stats_ctbr_1-1.txt!")
-
-    print("[ANALYZER] Normalizing CTBR data....")
     traj_meta[:, 16] = (traj_meta[:, 16] - stats_ctbr[0, 0]) / (2 * stats_ctbr[0, 1])
     traj_meta[:, 17] = (traj_meta[:, 17] - stats_ctbr[1, 0]) / (2 * stats_ctbr[1, 1])
     traj_meta[:, 18] = (traj_meta[:, 18] - stats_ctbr[2, 0]) / (2 * stats_ctbr[2, 1])
     traj_meta[:, 19] = (traj_meta[:, 19] - stats_ctbr[3, 0]) / (2 * stats_ctbr[3, 1])
-
-    print("============= STATS DATA ===============")
-    print(f"CT: Min: {np.min(traj_meta[:, 16])}, Max: {np.max(traj_meta[:, 16])}, Mean: {stats_ctbr[0, 0]}, Std: {stats_ctbr[0, 1]}")
-    print(f"BRx: Min: {np.min(traj_meta[:, 17])}, Max: {np.max(traj_meta[:, 17])}, Mean: {stats_ctbr[1, 0]}, Std: {stats_ctbr[1, 1]}")
-    print(f"BRy: Min: {np.min(traj_meta[:, 18])}, Max: {np.max(traj_meta[:, 18])}, Mean: {stats_ctbr[2, 0]}, Std: {stats_ctbr[2, 1]}")
-    print(f"BRz: Min: {np.min(traj_meta[:, 19])}, Max: {np.max(traj_meta[:, 19])}, Mean: {stats_ctbr[3, 0]}, Std: {stats_ctbr[3, 1]}")
-    print("========================================")
-    print()
 
     # make train-val split (relies on earlier shuffle of traj_folders to randomize selection)
     num_val_trajs = int(val_split * len(traj_lengths))
@@ -391,7 +165,7 @@ def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
 
     # Note, we return the is_png flag since it indicates old vs new datasets, which indicates how to parse the metadata
     # We also return the traj_folder names for train and val sets, so that they can be saved and later used to specifically generate evaluate plots on each set
-    return (traj_meta_train, traj_ims_train, traj_lengths_train, desired_vels_train, curr_quats_train, curr_ctbr_train), (traj_meta_val, traj_ims_val, traj_lengths_val, desired_vels_val, curr_quats_val, curr_ctbr_val), is_png, (traj_folders[num_val_trajs:], traj_folders[:num_val_trajs])
+    return (traj_meta_train, traj_ims_train, traj_lengths_train, desired_vels_train, curr_quats_train, curr_ctbr_train), (traj_meta_val, traj_ims_val, traj_lengths_val, desired_vels_val, curr_quats_val, curr_ctbr_val), 1, (traj_folders[num_val_trajs:], traj_folders[:num_val_trajs])
 
 def parse_meta_str(meta_str):
 

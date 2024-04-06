@@ -19,8 +19,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from dataloading import *
-folder_path = os.path.join(os.path.dirname(__file__), 'models')
-sys.path.insert(0, folder_path)
+folder_path = os.path.join(os.getcwd(), 'models')
+sys.path.append(folder_path)
 import model as network
 
 # NOTE this suppresses tensorflow warnings and info
@@ -45,7 +45,6 @@ class TRAINER:
             self.short = args.short
 
             self.model_type = args.model_type
-            self.num_lstm_layers = args.num_lstm_layers
             self.val_split = args.val_split
             self.seed = args.seed if args.seed>0 else None
             self.load_checkpoint = args.load_checkpoint
@@ -110,7 +109,6 @@ class TRAINER:
 
         self.dataloader(val_split=self.val_split, short=self.short, seed=self.seed, train_val_dirs=train_val_dirs)
 
-        # self.num_training_steps = self.train_meta.shape[0]
         # TODO hardcoding num_training_steps to be the number of trajectories instead of number of images
         self.num_training_steps = self.train_trajlength.shape[0]
         self.num_val_steps = self.val_trajlength.shape[0]
