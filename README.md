@@ -18,3 +18,6 @@ cd ViT-for-quadrotor-obstacle-avoidance
 ./setup_ros.bash
 catkin build
 ```
+
+# TODO
+train_set, config and the output dirs have to be created before the first launch
