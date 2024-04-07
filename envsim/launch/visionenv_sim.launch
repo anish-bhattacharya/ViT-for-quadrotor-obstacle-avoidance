@@ -32,7 +32,7 @@
           if="$(arg gui)"/>
     
     <!-- Flightmare Standalone -->
-    <node name="flight_render" pkg="flightrender" type="new.x86_64" if="$(arg render)"/>
+    <node name="flight_render" pkg="flightrender" type="trees.x86_64" if="$(arg render)"/>
     <!-- args="-batchmode"/> -->
 
 </launch>
