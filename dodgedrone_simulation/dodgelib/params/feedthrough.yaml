@@ -1,0 +1,6 @@
+# Transformation, in case the estimate comes in a different reference frame
+transform_enabled: false
+roll: 0.0                       # [deg]
+pitch: -35.0                     # [deg]
+yaw: 0.0                        # [deg]
+pos_offset: [0.0, 0.0, 0.0]     # [m]

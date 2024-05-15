@@ -1,0 +1,5 @@
+*
+!generate_multiple.bash
+!.gitignore
+!obstacle_config.yaml
+!obstacle_generator.py

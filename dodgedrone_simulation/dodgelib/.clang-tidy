@@ -1,0 +1,15 @@
+Checks:          "clang-diagnostic-*,
+                  clang-analyzer-*,
+                  -clang-analyzer-core.uninitialized.UndefReturn,
+                  -clang-analyzer-optin.portability.UnixAPI,
+                  -clang-analyzer-unix.Malloc,
+                  modernize-*,
+                  -modernize-use-trailing-return-type,
+                  -modernize-use-nodiscard,
+                  -modernize-avoid-c-arrays,
+                  -modernize-pass-by-value,
+                  performance-*"
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*\/include\/rise.*'
+AnalyzeTemporaryDtors: false
+FormatStyle:     file

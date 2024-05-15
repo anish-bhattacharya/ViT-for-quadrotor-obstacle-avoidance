@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>envsim</name>
+    <version>0.0.1</version>
+    <description>ROS-Wrapper for Dodgelib</description>
+
+    <maintainer email="song@ifi.uzh.ch">Yunlong Song</maintainer>
+
+    <license>GNU GPL</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <buildtool_depend>catkin_simple</buildtool_depend>
+
+    <depend>dodgelib</depend>
+    <depend>dodgeros</depend>
+    <depend>cv_bridge</depend>
+    <depend>envsim_msgs</depend>
+    <depend>flightlib</depend>
+    <depend>image_transport</depend>
+    <depend>roscpp</depend>
+    <depend>rosgraph_msgs</depend>
+
+</package>

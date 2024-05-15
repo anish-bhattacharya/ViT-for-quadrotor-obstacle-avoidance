@@ -1,0 +1,32 @@
+drag_compensation:            true
+
+# kpacc:                        [1.0,  1.2, 2.0]
+kpacc:                        [5.0,  5.0, 10.0]
+kdacc:                        [ 3.0,   3,  5.0]
+
+kpatt_z:                      2
+kpatt_xy:                     10
+kprate:                       [0.0, 0.0, 0.0]
+
+p_err_max:                    [0.6, 0.7, 0.5]
+# p_err_max:                    [0.6, 0.6, 0.3]
+v_err_max:                    [0.5, 5.0, 5.0]
+
+filter_sampling_frequency:     300   # filter frequency, same as control frequency (Hz)
+filter_cutoff_frequency:       130    # outer loop filter cut-off frequency (Hz)
+
+# # Elia's commit "add remote ctrl interface" 565438ba4b126247838d8ce0f83bc634ee3a624b
+# drag_compensation:            false
+
+# kpacc:                        [5.0,  5.0, 10.0]
+# kdacc:                        [ 4.0,   4.0,  6.0]
+
+# kpatt_z:                      2
+# kpatt_xy:                     10
+# kprate:                       [0.0, 0.0, 0.0]
+
+# p_err_max:                    [1.0, 1.0, 1.0]
+# v_err_max:                    [1.0, 1.0, 1.0]
+
+# filter_sampling_frequency:     300   # filter frequency, same as control frequency (Hz)
+# filter_cutoff_frequency:       6    # outer loop filter cut-off frequency (Hz)

@@ -1,0 +1,28 @@
+timing:                             true
+threaded_preparation:               false
+Q_pos_x:                            200
+Q_pos_y:                            200
+Q_pos_z:                            500
+Q_att_x:                            5
+Q_att_y:                            5
+Q_att_z:                            200
+Q_vel:                              1.0
+Q_omega_xy:                         1.0
+Q_omega_z:                          1.0
+R:                                  6.0
+exp_decay_states:                   0.0
+exp_decay_inputs:                   0.0
+max_wait_time_before_preparation:   0.1
+max_wait_time_after_preparation:    0.01
+
+# CoG Filter
+cog_enable:                         false
+cog_abs_velocity_limit:             0.25 # [m/s]
+cog_abs_omega_limit:                0.5 # [rad/s]
+cog_rel_hover_thrust_limit:         0.5 # allow 50% relative deviation to hover thrust
+cog_height_limit:                   0.5 # [m]
+Q_cog_omega:                        1e0
+Q_cog_legnths:                      1e-9
+Q_cog_omega_init:                   1e2
+Q_cog_legnths_init:                 1e-10
+R_cog:                              0.1

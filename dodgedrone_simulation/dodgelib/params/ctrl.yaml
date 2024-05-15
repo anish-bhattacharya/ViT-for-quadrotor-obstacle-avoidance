@@ -1,0 +1,10 @@
+port: /dev/ttyS0
+baudrate: 921600
+timeout: 0.1
+
+
+thrust_map:         thrust_map_tobi.csv               # filename of thrust map
+thrust_coeff:       1.515e-6                           # hovering thrust coeff (Ct), F = Ct w^2
+n_timeouts_for_lock: 10
+ctrl_mode: 5 				#ROTOR_THROTTLE = 4, ROTOR_SPEED = 5, ROTOR_THRUST = 6, BODY_RATE = 7
+command_throttle_direct: false	#if to send the command values directly as throttle - i.e. for thrust mapping

@@ -1,0 +1,11 @@
+rgb_camera:
+  on: yes
+  t_BC: [0.0, 0.0, 0.3]
+  r_BC: [0.0, 0.0, -90]
+  channels: 3
+  width: 320
+  height: 240
+  fov: 70.0
+  enable_depth: yes
+  enable_segmentation: no 
+  enable_opticalflow: no 
