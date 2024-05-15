@@ -12,18 +12,12 @@ We demonstrate that vision transformers (ViTs) can be used for end-to-end percep
 
 #### Generalization to simulation environments
 
-<!-- insert gif here form media folder -->
-<!-- ![Generalization to simulation trees](media/vitlstm_trees.gif) -->
 <img src="media/trees-vitlstm.gif" width="400" height="200">
-
-<!-- ![Generalization to window gap](media/walls-vitlstm.gif) -->
 <img src="media/walls-vitlstm.gif" width="250" height="200">
-<br>
 
 #### Zero-shot transfer to multi-obstacle and high-speed, real-world dodging
 
 <img src="media/multi-obstacle-vitlstm.gif" width="300" height="200">
-
 <img src="media/7ms-vitlstm.gif" width="380" height="200">
 
 
