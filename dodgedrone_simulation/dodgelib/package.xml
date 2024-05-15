@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>dodgelib</name>
+  <version>0.0.1</version>
+  <description>Highly Agile Flight Stack for Tracking Arena</description>
+
+  <maintainer email="foehn@ifi.uzh.ch">foehnph</maintainer>
+
+  <license>GNU GPL</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
+
+  <depend>benchmark_catkin</depend>
+  <depend>gtest</depend>
+</package>

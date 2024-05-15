@@ -1,0 +1,36 @@
+pipeline:
+  estimator:
+    type:               "Feedthrough"
+    file:               "feedthrough.yaml"
+
+  sampler:
+    type:               "Time"
+
+  controller:
+    type:               "GEO"
+    file:               "geo.yaml"
+
+  bridge:
+    type:               "ROS"
+
+quadrotor:              "kingfisher.yaml"
+
+dt_min:                 0.01
+dt_telemetry:           0.02  # Publish telemetry messages with this period (used for GUI and IMU)
+
+traj_type:              "poly_min_jerk"
+velocity_in_bodyframe:  false
+takeoff_height:         1.0   # target takeoff height
+takeoff_threshold:      0.5   # height under which takeoff is performed
+start_land_speed:       0.6
+brake_deceleration:     5.0
+go_to_pose_mean_vel:    1.5
+stop_after_feedthrough: true
+feedthrough_timeout:    0.1
+
+#trajectory_visualization:
+viz_sampler_dt: 0.1                  # how dense to sample the reference trajectory (affects ONLY visualization!)
+sphere_size: 0.15                     # size of spheres that differentiate between trajectories
+
+#publishing of logged variables:
+pub_log_var: false

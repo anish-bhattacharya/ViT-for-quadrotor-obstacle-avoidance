@@ -1,0 +1,10 @@
+{
+"recommendations": [
+  "ms-vscode.cpptools",
+  "ms-vscode.cmake-tools",
+  "matepek.vscode-catch2-test-adapter",
+  "hbenl.vscode-test-explorer",
+  "ms-iot.vscode-ros",
+  "xaver.clang-format"
+]
+}

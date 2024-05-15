@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="quad_name" default="kingfisher"/>
+    <arg name="use_bem_propeller_model" default="False"/>
+    <arg name="low_level_controller" default="Simple"/>
+    <arg name="use_joystick" default="False"/>
+    <param name="/use_sim_time" value="True"/>
+    <arg name="real_time_factor" value="1.0"/>
+
+    <group ns="$(arg quad_name)">
+        <node name="dodgeros_pilot" pkg="dodgeros" type="agisim_node" output="screen">
+            <param name="agi_param_dir" value="$(find dodgelib)/params"/>
+            <param name="bem_quad" value="sim_kingfisher.yaml"/>
+            <param name="ros_param_dir" value="$(find dodgeros)/parameters"/>
+            <param name="pilot_config" value="simple_sim_pilot.yaml"/>
+            <param name="use_bem_propeller_model" value="$(arg use_bem_propeller_model)"/>
+            <param name="real_time_factor" value="$(arg real_time_factor)"/>
+            <param name="low_level_controller" value="$(arg low_level_controller)"/>
+        </node>
+    </group>
+
+    <!-- Visualization -->
+    <node pkg="rviz" type="rviz" name="viz_face" args="-d $(find dodgeros)/resources/rviz/simulation.rviz"
+          ns="$(arg quad_name)"/>
+
+    <!-- GUI -->
+    <node name="dodgeros_gui" pkg="rqt_gui" type="rqt_gui"
+          args="-s dodgeros_gui.basic_flight.BasicFlight --args --quad_name $(arg quad_name)" output="screen"/>
+
+    <!-- Gamepad and RC Utility -->
+    <group if="$(arg use_joystick)">
+        <include file="$(find manual_flight_interface)/launch/manual_flight_interface.launch">
+            <arg name="quad_name" value="$(arg quad_name)"/>
+        </include>
+    </group>
+</launch>

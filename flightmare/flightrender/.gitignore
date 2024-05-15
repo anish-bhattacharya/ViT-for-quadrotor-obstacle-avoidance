@@ -1,0 +1,8 @@
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore
+!.clang-format
+!CMakeLists.txt
+!package.xml
+!*.x86_64

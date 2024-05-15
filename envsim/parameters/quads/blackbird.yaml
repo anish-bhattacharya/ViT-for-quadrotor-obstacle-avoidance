@@ -1,0 +1,33 @@
+mass:               0.752                    # [kg]
+tbm_fr:             [ 0.075, -0.10, 0.0]          # [m]
+tbm_bl:             [-0.075,  0.10, 0.0]         # [m]
+tbm_br:             [-0.075, -0.10, 0.0]         # [m]
+tbm_fl:             [ 0.075,  0.10, 0.0]          # [m]
+inertia:            [0.0025, 0.0021, 0.0043]     # [kgm^2]
+motor_omega_min:    150.0                     # [rad/s]
+motor_omega_max:    2800.0                    # [rad/s]
+motor_tau:          0.033                     # [s]
+omega_max:          [10.0, 10.0, 4.0]         # [rad/s]
+
+thrust_map:         [1.562522e-6, 0.0,  0.0]
+kappa:              0.022                    # [Nm/N]
+thrust_min:         0.0                       # [N]
+thrust_max:         8.5                      # [N] per motor
+rotors_config:      "cross"
+
+# BEM Drag Model, used for MPC
+aero_coeff_x_1:       0.0                     # 0.26 #[N/(v/m)]
+aero_coeff_y_1:       0.0                     # 0.28 #[N/(v/m)]
+aero_coeff_z_1:       0.0                     # 0.42 #[N/(v/m)]
+aero_coeff_h:         0.0                     # 0.01 #[N/(v^2/m^2)]
+
+# Simple Drag Model
+linear_drag_coeff_x: 0.26
+linear_drag_coeff_y: 0.26
+linear_drag_coeff_z: 0.30
+
+quadratic_drag_coeff_x: 0.015
+quadratic_drag_coeff_y: 0.015
+quadratic_drag_coeff_z: 0.015
+
+induced_lift_coeff: 0.015

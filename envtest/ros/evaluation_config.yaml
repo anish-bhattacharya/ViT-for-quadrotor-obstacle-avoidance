@@ -1,0 +1,13 @@
+topics:
+  quad_name: "kingfisher"
+  state: "dodgeros_pilot/state"
+  obstacles: "dodgeros_pilot/groundtruth/obstacles"
+  start: "start_navigation"
+  finish: "finish_navigation"
+
+target: 10 # goal distance in x-direction, must be INTEGER
+timeout: 40  # after [timeout] seconds without arriving at the desired distance in x direction, the episode is considered a failure
+bounding_box: [-5, 65, -10, 10, 0, 10] # when exiting this bounding box, the episode is considered a failure
+
+# if you really don't want the cool plots, put this to False
+plots: False

@@ -1,0 +1,23 @@
+# Python
+dist
+*.egg-info
+*.so
+__pycache__
+
+
+# Gitignore
+
+# VScode
+.vscode/
+.vscode/*
+**/.vscode/*
+!.vscode/extensions.json
+
+# General
+_build/
+.sass-cache
+_posts
+_site
+
+saved
+

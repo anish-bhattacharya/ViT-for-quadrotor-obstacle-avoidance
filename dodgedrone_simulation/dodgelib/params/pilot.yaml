@@ -1,0 +1,32 @@
+pipeline:
+  estimator:
+    type:               "EKFIMU"
+    file:               "ekf_imu.yaml"
+
+  sampler:
+    type:               "Time"
+
+  controller:
+    type:               "MPC"
+    file:               "mpc.yaml"
+
+  bridge:
+    type:               "SBUS"
+    file:               "sbus.yaml"
+
+traj_type:              "poly_min_snap"
+
+quadrotor:              "example_quad.yaml"
+
+dt_min:                 0.02    # min control period
+dt_telemetry:           0.5     # Publish telemetry messages with this period (used for GUI)
+
+velocity_in_bodyframe:  false
+takeoff_height:         1.0   # target takeoff height
+takeoff_threshold:      0.5   # height under which takeoff is performed
+start_land_speed:       0.6
+brake_deceleration:     5.0
+go_to_pose_mean_vel:    1.5
+
+
+
