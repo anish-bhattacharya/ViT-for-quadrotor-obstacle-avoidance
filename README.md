@@ -2,7 +2,7 @@
 
 Under construction; code for training and testing coming very soon, with instructions, pre-trained weights, and datasets.
 
-This is the official repository for the paper "Utilizing vision transformer models for end-to-end vision-based quadrotor obstacle avoidance" by Bhattacharya, et al. (2024) from GRASP, Penn.
+This is the official repository for the paper "Vision Transformers for End-to-End Vision-Based Quadrotor Obstacle Avoidance" by Bhattacharya, et al. (2024) from GRASP, Penn.
 
 <font size="3"><u>[Project page](https://www.anishbhattacharya.com/research/vit-depthfly)</u></font>
 
