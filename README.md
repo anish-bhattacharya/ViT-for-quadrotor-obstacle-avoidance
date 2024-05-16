@@ -1,4 +1,4 @@
-# Utilizing Vision Transformer (ViT) Models for End-to-End Vision-Based Quadrotor Obstacle Avoidance
+# Vision Transformers (ViTs) for End-to-End Vision-Based Quadrotor Obstacle Avoidance
 
 Under construction; code for training and testing coming very soon, with instructions, pre-trained weights, and datasets.
 
