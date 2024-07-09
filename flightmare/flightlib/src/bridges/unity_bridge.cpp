@@ -134,7 +134,7 @@ bool UnityBridge::getRender(const FrameID frame_id) {
   json json_msg = pub_msg_;
   msg << json_msg.dump();
   // send message without blocking
-  setScene(0);
+  // setScene(0);
   return pub_.send(msg, true);
 }
 
@@ -143,7 +143,7 @@ bool UnityBridge::setScene(const SceneID& scene_id) {
     logger_.warn("Scene ID is not defined, cannot set scene.");
     return false;
   }
-  // logger_.info("Scene ID is set to %d.", scene_id);
+  logger_.warn("Scene ID is set to %d.", scene_id);
   settings_.scene_id = scene_id;
   return true;
 }

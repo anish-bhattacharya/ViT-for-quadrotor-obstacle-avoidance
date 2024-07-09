@@ -2,3 +2,6 @@ easy/*
 medium/*
 hard/*
 realtrees_random/*
+*/
+*.zip
+*.tar

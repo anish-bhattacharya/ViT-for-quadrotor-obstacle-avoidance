@@ -1,5 +1,5 @@
 environment:
-  level: "medium" # three difficulty level [easy, medium, hard]
+  level: "realtrees_random" # three difficulty level [easy, medium, hard]
   env_folder: "environment_73"
   world_box: [-20, 80, -10, 10, 0.0, 15] # Bounding box applied during training, exiting this box terminates the episode. [xmin, xmax, ymin, ymax, zmin, zmax]
   goal_vel: [1.0, 0.0, 0.0] # goal velicty for tracking vx, vy, vz
@@ -35,8 +35,8 @@ rgb_camera:
   enable_opticalflow: no
 
 unity:
-  scene_id: 0 # 0 warehouse, 1 street, 2 forest, 3 wasteland
-  render: no 
+  scene_id: 2 # 0 empty, 1 industrial, 2 warehouse, 3 forest
+  render: no
 
 simulation:
   seed: 10
