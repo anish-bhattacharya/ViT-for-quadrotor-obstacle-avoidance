@@ -37,7 +37,14 @@ Coming pretty soon!
 
 ## Citation
 
-Coming quite soon!
+```
+@article{bhattacharya2024vision,
+  title={Vision Transformers for End-to-End Vision-Based Quadrotor Obstacle Avoidance},
+  author={Bhattacharya, Anish and Rao, Nishanth and Parikh, Dhruv and Kunapuli, Pratik and Matni, Nikolai and Kumar, Vijay},
+  journal={arXiv preprint arXiv:2405.10391},
+  year={2024}
+}
+```
 
 ## Acknowledgements
 
