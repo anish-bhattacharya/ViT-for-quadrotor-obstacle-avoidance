@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
+
+<!-- Flightmare launch -->
+
 <launch>
     <arg name="quad_name" default="kingfisher"/>
     <arg name="use_bem_propeller_model" default="False"/>
@@ -9,6 +12,7 @@
     <arg name="gui" default="True"/>
     <arg name="rviz" default="True"/>
 
+    <!-- quadrotor simulation -->
     <group ns="$(arg quad_name)">
         <node name="dodgeros_pilot" pkg="envsim" type="visionsim_node" output="screen">
             <param name="agi_param_dir" value="$(find dodgelib)/params"/>
@@ -22,17 +26,17 @@
         </node>
     </group>
 
-    <!-- Visualization -->
+    <!-- visualization -->
     <node pkg="rviz" type="rviz" name="viz_face" args="-d $(find envsim)/resources/rviz/envsim.rviz"
           ns="$(arg quad_name)" if="$(arg rviz)"/>
 
-    <!-- GUI -->
+    <!-- gui (optional/unused for this project) -->
     <node name="dodgeros_gui" pkg="rqt_gui" type="rqt_gui"
           args="-s dodgeros_gui.basic_flight.BasicFlight --args --quad_name $(arg quad_name)" output="screen"
           if="$(arg gui)"/>
     
-    <!-- Flightmare Standalone -->
-    <node name="flight_render" pkg="flightrender" type="trees.x86_64" if="$(arg render)"/>
+    <!-- flightmare standalone -->
+    <node name="flight_render" pkg="flightrender" type="vitfly-unity.x86_64" if="$(arg render)"/>
     <!-- args="-batchmode"/> -->
 
 </launch>

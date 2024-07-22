@@ -29,7 +29,7 @@ sys.path.append(opj(os.path.dirname(os.path.abspath(__file__)), '../../models'))
 from model import *
 
 class AgilePilotNode:
-    def __init__(self, vision_based=False, ppo_path=None, model_type=None, model_path=None, desVel=None, keyboard=False):
+    def __init__(self, vision_based=False, model_type=None, model_path=None, desVel=None, keyboard=False):
         print("[RUN_COMPETITION] Initializing agile_pilot_node...")
         rospy.init_node("agile_pilot_node", anonymous=False)
 
@@ -96,9 +96,9 @@ class AgilePilotNode:
                 self.model = UNetConvLSTMNet().to(self.device).float()
             elif model_type == 'ConvNet':
                 self.model = ConvNet().to(self.device).float()                
-            elif model_type == 'vit':
+            elif model_type == 'ViT':
                 self.model = ViT().to(self.device).float()
-            elif model_type == 'vitlstm':
+            elif model_type == 'ViTLSTM':
                 self.model = LSTMNetVIT().to(self.device).float()                
             else:
                 print(f'[RUN_COMPETITION] Invalid model_type {model_type}. Exiting.')
@@ -469,12 +469,11 @@ class AgilePilotNode:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Agile Pilot.")
     parser.add_argument("--vision_based", help="Fly vision-based", required=False, dest="vision_based", action="store_true")
-    parser.add_argument("--ppo_path", help="PPO neural network policy", required=False, default=None)
     parser.add_argument('--model_type', type=str, default='LSTMNet', help='string matching model name in lstmArch.py')
     parser.add_argument('--model_path', type=str, default=None, help='absolute path to model checkpoint')
     parser.add_argument('--num_lstm_layers', type=float, default=None, help='number of lstm layers, needs to be passed in for some models like LSTMNetwFC')
     parser.add_argument("--keyboard", help="Fly state-based mode but take velocity commands from keyboard WASD", required=False, dest="keyboard", action="store_true")
 
     args = parser.parse_args()
-    agile_pilot_node = AgilePilotNode(vision_based=args.vision_based, ppo_path=args.ppo_path, model_type=args.model_type, model_path=args.model_path, desVel=args.num_lstm_layers, keyboard=args.keyboard)
+    agile_pilot_node = AgilePilotNode(vision_based=args.vision_based, model_type=args.model_type, model_path=args.model_path, desVel=args.num_lstm_layers, keyboard=args.keyboard)
     rospy.spin()

@@ -341,7 +341,7 @@ bool VisionEnv::changeObsLoc(void){
     //Get the static data file
     std::string csvFile = obstacle_cfg_path_ + std::string("/static_kr_") + std::to_string(i) +std::string(".csv");
     if(!readTrainingObs(csvFile, i)){
-      logger_.error("[changeObsLoc] Function didn't run as intended!");
+      logger_.warn("[changeObsLoc] Function not moving obstacles.");
       return false; //We should not return and let the obstacles stay constant?
     }
   }
@@ -352,7 +352,7 @@ bool VisionEnv::readTrainingObs(std::string &csv_file, int obsNo) {
   //
   if (!(file_exists(csv_file))) {
     logger_.info(csv_file);
-    logger_.error("[readTrainingObs] Configuration file %s does not exists.", csv_file);
+    logger_.warn("[readTrainingObs] Configuration file %s does not exists.", csv_file);
     return false;
   }
   // logger_.info("Changing Position!");

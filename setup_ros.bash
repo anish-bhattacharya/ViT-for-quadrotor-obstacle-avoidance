@@ -2,7 +2,7 @@
 
 if [[ ! -f "$(pwd)/setup_ros.bash" ]]
 then
-  echo "please launch from the racing folder!"
+  echo "please launch from the repository folder!"
   exit
 fi
 
@@ -20,6 +20,9 @@ touch flightmare/flightros/CATKIN_IGNORE
 
 echo "Setting the flightmare environment variable. Please add 'export FLIGHTMARE_PATH=$PWD/flightmare' to your .bashrc!"
 export FLIGHTMARE_PATH=$project_path/flightmare
+
+echo "Creating envtest/ros/train_set folder to store images and telemetry during flights..."
+mkdir $project_path/envtest/ros/train_set
 
 echo "Done!"
 echo "Have a save flight!"

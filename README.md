@@ -1,17 +1,19 @@
 # Vision Transformers (ViTs) for End-to-End Vision-Based Quadrotor Obstacle Avoidance
 
-Under construction; code for training and testing coming very soon, with instructions, pre-trained weights, and datasets.
+*Under construction; instructions for training your own models, as well as running baselines, coming soon!*
+
+**Updates:**
+*July 22, 2024 -- Full install and testing instructions and code available! Includes updates to setup files, launch_evaluation.bash, and to datashare files.*
+
+[Project page](https://www.anishbhattacharya.com/research/vit-depthfly)  &nbsp; [(Paper)](https://arxiv.org/abs/2405.10391)
 
 This is the official repository for the paper "Vision Transformers for End-to-End Vision-Based Quadrotor Obstacle Avoidance" by Bhattacharya, et al. (2024) from GRASP, Penn.
 
-<font size="3"><u>[Project page](https://www.anishbhattacharya.com/research/vit-depthfly)</u></font>
-
-We demonstrate that vision transformers (ViTs) can be used for end-to-end perception-based obstacle avoidance for quadrotors equipped with a depth camera. We train policies that predict linear velocity commands to avoid static obstacles via behavior cloning from a privileged expert in a simple simulation environment, and show that ViT models combined with recurrence layers (LSTMs) outperform baseline methods based on other popular architectures. Deployed on a real quadrotor, we can achieve zero-shot dodging behavior at speeds reaching 7 m/s.
+We demonstrate that vision transformers (ViTs) can be used for end-to-end perception-based obstacle avoidance for quadrotors equipped with a depth camera. We train policies that predict linear velocity commands to avoid static obstacles via behavior cloning from a privileged expert in a simple simulation environment, and show that ViT models combined with recurrence layers (LSTMs) outperform baseline methods based on other popular architectures. Deployed on a real quadrotor, we can achieve zero-shot dodging behavior at speeds reaching 7 m/s and on multi-obstacle environments.
 
 <!-- GIFs -->
 
-#### Generalization to simulation environments
-
+#### Generalization to simulation environments 
 <img src="media/trees-vitlstm.gif" width="400" height="200"> <img src="media/walls-vitlstm.gif" width="250" height="200">
 
 #### Zero-shot transfer to multi-obstacle and high-speed, real-world dodging
@@ -21,19 +23,94 @@ We demonstrate that vision transformers (ViTs) can be used for end-to-end percep
 
 ## Installation
 
-Coming really soon!
+#### (optional) Set up a catkin workspace
+
+If you'd like to start a new catkin workspace, then a typical workflow is (note that this code has only been tested with ROS Noetic and Ubuntu 20.04):
+```
+cd
+mkdir -p catkin_ws/src
+cd catkin_ws
+catkin init
+catkin config --extend /opt/ros/$ROS_DISTRO
+catkin config --merge-devel
+catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fdiagnostics-color
+```
+
+#### Clone this repository and set up
+
+Once inside your desired workspace, clone this repository (note, we rename it to `vitfly`):
+```
+cd ~/catkin_ws/src
+git clone git@github.com:anish-bhattacharya/ViT-for-quadrotor-obstacle-avoidance.git vitfly
+cd vitfly
+```
+
+In order to replicate Unity environments similar to those we use for training and testing, you will need to download `environments.tar` from [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare) and extract it to the right location (below). We provide the medium-level spheres scene and a trees scene. Other obstacle environments are provided by [ICRA 2022 DodgeDrone Competition](https://github.com/uzh-rpg/agile_flight).
+```
+tar -xvf <path/to/environments.tar> -C flightmare/flightpy/configs/vision
+```
+
+You will also need to download our Unity resources and binaries. Download `flightrender.tar` from [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare) and then:
+```
+tar -xvf <path/to/flightrender.tar> -C flightmare/flightrender
+```
+
+Then, install the dependencies via a given script:
+```
+bash setup_ros.bash
+cd ../..
+catkin build
+source devel/setup.bash
+cd src/vitfly
+```
 
 ## Test
 
-#### Pretrained weights
+#### Download pretrained weights
 
-Visit the datashare link below and download `pretrained_models.tar`. This tarball includes pretrained models for ConvNet, LSTMnet, UNet, ViT, and ViT+LSTM (our best model).
+Download `pretrained_models.tar` from [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare). This tarball includes pretrained models for ConvNet, LSTMnet, UNet, ViT, and ViT+LSTM (our best model).
+```
+tar -xvf <path/to/pretrained_models.tar> -C models
+```
 
-[Datashare](https://upenn.app.box.com/v/ViT-quad-datashare)
+#### Edit the config file
+
+For testing on a medium-level spheres or trees environment, edit the file `flightmare/flightpy/configs/vision/config.yaml` line 2-3 as following:
+```
+level: "spheres_medium" # spheres
+env_folder: "environment_<any int between 0-100>"
+```
+```
+level: "trees" # trees
+env_folder: "environment_<any int between 0-499>"
+```
+
+When running the simulation (the following section), you can set any number `N` of trials to run. To run trials on the same, specified environment index, set `datagen: 1` and `rollout: 0`. To run sequentially different environment indices upon each trial, set `datagen: 0` and `rollout: 1`. For the latter more, the  environments prefixed with `custom_` are used. These set the static obstacles as dynamic, so that they can be moved to new positions upon each trial, within the same Unity instance.
+
+You may also change the `unity: scene: 2` scene index according to those provided in the Unity binary. The available environments and their drone starting positions are found in `flightmare/flightpy/configs/scene.yaml`.
+
+#### Run the simulation
+
+The `launch_evaluation.bash` script launches Flightmare and the trained model for depth-based flight when using `vision` mode. To run one trial, run:
+```
+bash launch_evaluation.bash 1 vision
+```
+
+Some details: Change `1` to any number of trials you'd like to run. If you look at the bash script, you'll see multiple python scripts being run. `envtest/ros/evaluation_node.py` counts crashes, starts and aborts trials, and prints other statistics to the console. `envtest/ros/run_competition.py` subscribes to input depth images and passes them to the corresponding functions (located in `envtest/ros/user_code.py`) that run the model and return desired velocity commands. Please note that there is plenty of legacy and messy code throughout these scripts; we hope to clean this up soon, but this is not an actively maintained repository.
+
+The topic `/debug_img1` streams a depth image with an overlaid velocity vector arrow which indicates the model's output velocity command.
 
 ## Train
 
-Coming pretty soon!
+The training dataset is available as `data.zip` from the [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare). Unzip this data to wherever you'd like.
+
+Each numerically-named folder within `data` contains an expert trajectory: `<timestamp>.png` files are depth images and `data.csv` stores velocity commands, orientations, and other information.
+
+*Additional training instructions coming soon.*
+
+<!-- ## Baseline methods
+
+We compare our end-to-end learning models against some state-of-the-art classical, modular approaches. The code and instructions to run these baseline methods is coming soon. -->
 
 ## Citation
 
@@ -49,3 +126,27 @@ Coming pretty soon!
 ## Acknowledgements
 
 Simulation launching code and the versions of `flightmare` and `dodgedrone_simulation` are from the [ICRA 2022 DodgeDrone Competition code](https://github.com/uzh-rpg/agile_flight).
+
+---
+
+### Some debugging tips below
+
+#### `catkin build` error on existing `eigen` when building flightlib
+Error message:
+```
+CMake Error: The current CMakeCache.txt directory vitfly/flightmare/flightlib/externals/eigen/CMakeCache.txt is different than the directory <some-other-package>/eigen where CMakeCache.txt was created. This may result in binaries being created in the wrong place. If you are not sure, reedit the CMakeCache.txt.
+```
+Possible solution:
+```
+cd flightmare/flightlib/externals/eigen
+rm -rf CMakeCache.txt CMakeFiles
+cd <your-workspace>
+catkin clean
+catkin build
+```
+
+#### `[Pilot]        Not in hover, won't switch to velocity reference!` (warning)
+You can ignore this warning as long as further console prints appear indicating the sending of start navigation command, and the running of the compute_command_vision_based model.
+
+#### `[readTrainingObs] Configuration file � does not exists.` (warning)
+This appears when you are in `datagen: 1, rollout: 0` mode, and the scene manager looks for a `custom_` prefixed scene to load which is needed for `datagen: 0, rollout: 1` mode. You can ignore this warning.

@@ -5,4 +5,3 @@
 !.clang-format
 !CMakeLists.txt
 !package.xml
-!*.x86_64
