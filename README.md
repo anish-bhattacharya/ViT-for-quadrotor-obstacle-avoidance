@@ -3,7 +3,7 @@
 *Under construction; instructions for training your own models, as well as running baselines, coming soon!*
 
 **Updates:**
-*July 22, 2024 -- Full install and testing instructions and code available! Includes updates to setup files, launch_evaluation.bash, and to datashare files.*
+*July 22, 2024 -- Full install, simulation testing, and real-world testing instructions/code available! Includes updates to setup files, launch_evaluation.bash, and to datashare files.*
 
 [Project page](https://www.anishbhattacharya.com/research/vit-depthfly)  &nbsp; [(Paper)](https://arxiv.org/abs/2405.10391)
 
@@ -64,7 +64,7 @@ source devel/setup.bash
 cd src/vitfly
 ```
 
-## Test
+## Test (simulation)
 
 #### Download pretrained weights
 
@@ -100,7 +100,7 @@ Some details: Change `1` to any number of trials you'd like to run. If you look 
 
 The topic `/debug_img1` streams a depth image with an overlaid velocity vector arrow which indicates the model's output velocity command.
 
-## Train
+## Train (simulation)
 
 The training dataset is available as `data.zip` from the [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare). Unzip this data to wherever you'd like.
 
@@ -111,6 +111,31 @@ Each numerically-named folder within `data` contains an expert trajectory: `<tim
 <!-- ## Baseline methods
 
 We compare our end-to-end learning models against some state-of-the-art classical, modular approaches. The code and instructions to run these baseline methods is coming soon. -->
+
+## Real-world deployment
+
+We provide a simple ROS1 package for running the trained models on an incoming depth camera stream. This package, called `depthfly`, can be easily modified for your use-case. On a 12-core, 16GB RAM, cpu-only machine (similar to that used for hardware experiments) the most complex model ViT+LSTM should take around 25ms for a single inference.
+
+You should modify the `DEPTHFLY_PATH`, `self.desired_velocity`, `self.model_type`, and `self.model_path` in the ROS node python script `depthfly/scripts/run.py`. Additionally, you need to modify the ROS topic names in the subscribers and publishers as appropriate.
+
+Run a Realsense D435 camera and the model inference node with:
+```
+roslaunch depthfly depthfly.launch
+```
+
+We include a `/trigger` signal that, when continuously published to, will route the predicted velocity commands to a given topic `/robot/cmd_vel`. We do this with the following terminal command. If you Ctl+C this command, the node will send velocity 0.0 commands to stop in place.
+```
+rostopic pub -r 50 /trigger std_msgs/Empty "{}"
+```
+
+Some details:
+- Keep in mind the model is trained to continuously fly at the desired velocity and would require manual pilot takeover to stop.
+- Raw outputs of the node are published on `/output` topics.
+- Since it is assumed we are dodging vertical obstacles, we ignore z-velocity model commands and instead institute a p-gain controller to reach a desired height of 1.0 (line 159) (if you decide to accept z-commands from the model then ensure that you read robot odometry and maintain a minimum and maximum height).
+- We use a ramp-up in the `run()` function to smoothly accelerate the drone to the desired velocity over 2 seconds.
+- Velocity commands are published with respect to x-direction forward, y-direction left, and z-direction up.
+
+Please fly safely!
 
 ## Citation
 

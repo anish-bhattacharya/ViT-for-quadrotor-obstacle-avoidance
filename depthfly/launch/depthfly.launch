@@ -1,0 +1,11 @@
+<!-- Launch file for launching realsense d435 depth camera and inference node in depthfly package -->
+<!-- https://www.anishbhattacharya.com/research/vit-depthfly -->
+<launch>
+
+    <!-- depth camera -->
+    <include file="$(find depthfly)/launch/d435.launch"/>
+
+    <!-- inference node -->
+    <node name="inference_node" pkg="depthfly" type="run.py" output="screen"/>
+
+</launch>

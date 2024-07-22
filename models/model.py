@@ -15,6 +15,21 @@ from torch.nn import LSTM
 import torch.nn.utils.spectral_norm as spectral_norm
 from ViTsubmodules import *
 
+def refine_inputs(X):
+
+    # fill quaternion rotation if not given
+    # make it [1, 0, 0, 0] repeated with numrows = X[0].shape[0]
+    if X[2] is None:
+        # X[2] = torch.Tensor([1, 0, 0, 0]).float()
+        X[2] = torch.zeros((X[0].shape[0], 4)).float().to(X[0].device)
+        X[2][:, 0] = 1
+
+    # if input depth images are not of right shape, resize
+    if X[0].shape[-2] != 60 or X[0].shape[-1] != 90:
+        X[0] = F.interpolate(X[0], size=(60, 90), mode='bilinear')
+
+    return X
+
 class ConvNet(nn.Module):
     """
     Conv + FC Network 
@@ -34,6 +49,9 @@ class ConvNet(nn.Module):
         self.fc3 = nn.Linear(32, 3)
 
     def forward(self, X):
+
+        X = refine_inputs(X)
+
         x = X[0]
         x = -self.maxpool(- self.bn1(F.relu(self.conv1(x))))
         x = self.avgpool(F.relu(self.conv2(x)))
@@ -50,8 +68,6 @@ class ConvNet(nn.Module):
         x = self.fc3(x)
 
         return x, None #None is passed to be compatible with hidden dimensions
-
-
 
 class LSTMNet(nn.Module):
     """
@@ -74,6 +90,9 @@ class LSTMNet(nn.Module):
         self.fc3 = spectral_norm(nn.Linear(16, 3))
 
     def forward(self, X):
+
+        X = refine_inputs(X)
+
         x = X[0]
         x = -self.maxpool(-self.bn1(F.relu(self.conv1(x))))
         x = self.avgpool(self.bn2(F.relu(self.conv2(x))))
@@ -88,7 +107,6 @@ class LSTMNet(nn.Module):
         x = F.leaky_relu(self.fc2(x))
         x = self.fc3(x)
         return x, h
-
 
 class LSTMNetVIT(nn.Module):
     """
@@ -112,6 +130,9 @@ class LSTMNetVIT(nn.Module):
         self.down_sample = nn.Conv2d(48,12,3, padding = 1)
 
     def forward(self, X):
+
+        X = refine_inputs(X)
+
         x = X[0]
         embeds = [x]
         for block in self.encoder_blocks:
@@ -147,6 +168,9 @@ class ViT(nn.Module):
         self.down_sample = nn.Conv2d(48,12,3, padding = 1)
 
     def forward(self, X):
+
+        X = refine_inputs(X)
+
         x = X[0]
         embeds = [x]
         for block in self.encoder_blocks:
@@ -204,8 +228,10 @@ class UNetConvLSTMNet(nn.Module):
         self.nn_fc2 = torch.nn.utils.spectral_norm(nn.Linear(64, 32))
         self.nn_fc3 = torch.nn.utils.spectral_norm(nn.Linear(32, 3))
 
-
     def forward(self, x):
+
+        X = refine_inputs(X)
+
         img, des_vel, quat = x[0], x[1], x[2]
         y_e1 = torch.relu(self.unet_e12(torch.relu(self.unet_e11(img))))
         unet_enc1 = self.unet_pool1(y_e1)
@@ -234,8 +260,7 @@ class UNetConvLSTMNet(nn.Module):
         y_fc2 = F.leaky_relu(self.nn_fc2(y_fc1))
         y = self.nn_fc3(y_fc2)
 
-        return y, h    
-
+        return y, h
 
 if __name__ == '__main__':
     print("MODEL NUM PARAMS ARE")

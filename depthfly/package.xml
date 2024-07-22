@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>depthfly</name>
+  <version>0.0.0</version>
+  <description>A sample package for running a ViT-based model on depth images for obstacle avoidance via a ROS1 node.</description>
+
+  <maintainer email="dcist@todo.todo">dcist</maintainer>
+  <license>MIT License with Commercial Use Restriction</license>
+  <url type="website">https://www.anishbhattacharya.com/research/vit-depthfly</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
