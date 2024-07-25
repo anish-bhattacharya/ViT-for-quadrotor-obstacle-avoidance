@@ -1,7 +1,9 @@
 # Vision Transformers (ViTs) for End-to-End Vision-Based Quadrotor Obstacle Avoidance
 
 **Updates:**
+
 *July 22, 2024 -- Full install, simulation testing, and real-world testing instructions/code available! Includes updates to setup files, launch_evaluation.bash, and to datashare files.*
+
 *July 25, 2024 -- Training instructions available, including details on using our provided dataset or gathering your own in simulation.*
 
 [Project page](https://www.anishbhattacharya.com/research/vit-depthfly)  &nbsp; [(Paper)](https://arxiv.org/abs/2405.10391)
