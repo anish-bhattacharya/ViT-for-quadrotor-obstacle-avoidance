@@ -163,7 +163,7 @@ def dataloader(data_dir, val_split=0., short=0, seed=None, train_val_dirs=None):
     curr_ctbr_val = curr_ctbr[:val_idx]
     curr_ctbr_train = curr_ctbr[val_idx:]
 
-    # Note, we return the is_png flag since it indicates old vs new datasets, which indicates how to parse the metadata
+    # Note, we return the is_png=1 flag since it indicates old vs new datasets, which indicates how to parse the metadata
     # We also return the traj_folder names for train and val sets, so that they can be saved and later used to specifically generate evaluate plots on each set
     return (traj_meta_train, traj_ims_train, traj_lengths_train, desired_vels_train, curr_quats_train, curr_ctbr_train), (traj_meta_val, traj_ims_val, traj_lengths_val, desired_vels_val, curr_quats_val, curr_ctbr_val), 1, (traj_folders[num_val_trajs:], traj_folders[:num_val_trajs])
 

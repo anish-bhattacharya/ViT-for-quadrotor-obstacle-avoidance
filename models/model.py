@@ -228,11 +228,11 @@ class UNetConvLSTMNet(nn.Module):
         self.nn_fc2 = torch.nn.utils.spectral_norm(nn.Linear(64, 32))
         self.nn_fc3 = torch.nn.utils.spectral_norm(nn.Linear(32, 3))
 
-    def forward(self, x):
+    def forward(self, X):
 
         X = refine_inputs(X)
 
-        img, des_vel, quat = x[0], x[1], x[2]
+        img, des_vel, quat = X[0], X[1], X[2]
         y_e1 = torch.relu(self.unet_e12(torch.relu(self.unet_e11(img))))
         unet_enc1 = self.unet_pool1(y_e1)
         y_e2 = torch.relu(self.unet_e22(torch.relu(self.unet_e21(unet_enc1))))
@@ -250,8 +250,8 @@ class UNetConvLSTMNet(nn.Module):
 
         x_lstm = torch.cat([torch.flatten(y_conv, 1), torch.flatten(y_e3, 1), des_vel*0.1, quat], dim=1).float()
 
-        if len(x_lstm)>3:
-            y_lstm, h = self.lstm(x_lstm, x[3])
+        if len(X)>3:
+            y_lstm, h = self.lstm(x_lstm, X[3])
         else:
             y_lstm, h = self.lstm(x_lstm)
 

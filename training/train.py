@@ -19,9 +19,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from dataloading import *
-folder_path = os.path.join(os.getcwd(), 'models')
-sys.path.append(folder_path)
-import model as network
+sys.path.append(opj(os.path.dirname(os.path.abspath(__file__)), '../models'))
+import model as model_library
 
 # NOTE this suppresses tensorflow warnings and info
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -46,7 +45,7 @@ class TRAINER:
 
             self.model_type = args.model_type
             self.val_split = args.val_split
-            self.seed = args.seed if args.seed>0 else None
+            self.seed = args.seed # if args.seed>0 else None
             self.load_checkpoint = args.load_checkpoint
             self.checkpoint_path = args.checkpoint_path
             self.lr = args.lr
@@ -120,15 +119,15 @@ class TRAINER:
 
         self.mylogger('[SETUP] Establishing model and optimizer.')
         if self.model_type == 'LSTMNet':
-            self.model = network.LSTMNet().to(self.device).float()
+            self.model = model_library.LSTMNet().to(self.device).float()
         elif self.model_type == 'ConvNet':
-            self.model = network.ConvNet().to(self.device).float()
-        elif self.model_type == 'vit':            
-            self.model = network.ViT().to(self.device).float()
-        elif self.model_type == 'vitlstm':
-            self.model = network.LSTMNetVIT().to(self.device).float()
+            self.model = model_library.ConvNet().to(self.device).float()
+        elif self.model_type == 'ViT':            
+            self.model = model_library.ViT().to(self.device).float()
+        elif self.model_type == 'ViTLSTM':
+            self.model = model_library.LSTMNetVIT().to(self.device).float()
         elif self.model_type == 'UNet':
-            self.model = network.UNetConvLSTMNet().to(self.device).float()
+            self.model = model_library.UNetConvLSTMNet().to(self.device).float()
         else:
             self.mylogger(f'[SETUP] Invalid model_type {self.model_type}. Exiting.')
             exit()
@@ -314,7 +313,7 @@ def argparsing():
     parser.add_argument('--seed', type=int, default=None, help='random seed to use for python random, numpy, and torch -- WARNING, probably not fully implemented')
     parser.add_argument('--device', type=str, default='cuda', help='generic cuda device; specific GPU should be specified in CUDA_VISIBLE_DEVICES')
     parser.add_argument('--load_checkpoint', action='store_true', default=False, help='whether to load from a model checkpoint')
-    parser.add_argument('--checkpoint_path', nargs='+', type=str, default=f'/home/{uname}/agile_ws/src/agile_flight/learner/logs/d05_10_t03_13/model_000499.pth', help='absolute path to model checkpoint')
+    parser.add_argument('--checkpoint_path', type=str, default=f'/home/{uname}/agile_ws/src/agile_flight/learner/logs/d05_10_t03_13/model_000499.pth', help='absolute path to model checkpoint')
     parser.add_argument('--lr', type=float, default=1e-4, help='learning rate')
     parser.add_argument('--N_eps', type=int, default=100, help='number of epochs to train for')
     parser.add_argument('--lr_warmup_epochs', type=int, default=5, help='number of epochs to warmup learning rate for')

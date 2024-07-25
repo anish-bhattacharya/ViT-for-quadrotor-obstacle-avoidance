@@ -1,15 +1,14 @@
 # Vision Transformers (ViTs) for End-to-End Vision-Based Quadrotor Obstacle Avoidance
 
-*Under construction; instructions for training your own models, as well as running baselines, coming soon!*
-
 **Updates:**
 *July 22, 2024 -- Full install, simulation testing, and real-world testing instructions/code available! Includes updates to setup files, launch_evaluation.bash, and to datashare files.*
+*July 25, 2024 -- Training instructions available, including details on using our provided dataset or gathering your own in simulation.*
 
 [Project page](https://www.anishbhattacharya.com/research/vit-depthfly)  &nbsp; [(Paper)](https://arxiv.org/abs/2405.10391)
 
 This is the official repository for the paper "Vision Transformers for End-to-End Vision-Based Quadrotor Obstacle Avoidance" by Bhattacharya, et al. (2024) from GRASP, Penn.
 
-We demonstrate that vision transformers (ViTs) can be used for end-to-end perception-based obstacle avoidance for quadrotors equipped with a depth camera. We train policies that predict linear velocity commands to avoid static obstacles via behavior cloning from a privileged expert in a simple simulation environment, and show that ViT models combined with recurrence layers (LSTMs) outperform baseline methods based on other popular architectures. Deployed on a real quadrotor, we can achieve zero-shot dodging behavior at speeds reaching 7 m/s and on multi-obstacle environments.
+We demonstrate that vision transformers (ViTs) can be used for end-to-end perception-based obstacle avoidance for quadrotors equipped with a depth camera. We train policies that predict linear velocity commands to avoid static obstacles via behavior cloning from a privileged expert in a simple simulation environment, and show that ViT models combined with recurrence layers (LSTMs) outperform baseline methods based on other popular learning architectures. Deployed on a real quadrotor, our method achieves zero-shot dodging behavior at speeds reaching 7 m/s and on multi-obstacle environments.
 
 <!-- GIFs -->
 
@@ -23,6 +22,8 @@ We demonstrate that vision transformers (ViTs) can be used for end-to-end percep
 <img src="media/multi-onboard-min.gif" width="300" height="200"> <img src="media/7ms-onboard-min.gif" width="380" height="200">
 
 ## Installation
+
+Note that if you'd only like to train models, and *not* test in simulation, you can skip straight to section Train.
 
 #### (optional) Set up a catkin workspace
 
@@ -46,12 +47,12 @@ git clone git@github.com:anish-bhattacharya/ViT-for-quadrotor-obstacle-avoidance
 cd vitfly
 ```
 
-In order to replicate Unity environments similar to those we use for training and testing, you will need to download `environments.tar` from [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare) and extract it to the right location (below). We provide the medium-level spheres scene and a trees scene. Other obstacle environments are provided by [ICRA 2022 DodgeDrone Competition](https://github.com/uzh-rpg/agile_flight).
+In order to replicate Unity environments similar to those we use for training and testing, you will need to download `environments.tar` (1GB) from [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare) and extract it to the right location (below). We provide the medium-level spheres scene and a trees scene. Other obstacle environments are provided by [ICRA 2022 DodgeDrone Competition](https://github.com/uzh-rpg/agile_flight).
 ```
 tar -xvf <path/to/environments.tar> -C flightmare/flightpy/configs/vision
 ```
 
-You will also need to download our Unity resources and binaries. Download `flightrender.tar` from [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare) and then:
+You will also need to download our Unity resources and binaries. Download `flightrender.tar` (450MB) from [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare) and then:
 ```
 tar -xvf <path/to/flightrender.tar> -C flightmare/flightrender
 ```
@@ -69,7 +70,7 @@ cd src/vitfly
 
 #### Download pretrained weights
 
-Download `pretrained_models.tar` from [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare). This tarball includes pretrained models for ConvNet, LSTMnet, UNet, ViT, and ViT+LSTM (our best model).
+Download `pretrained_models.tar` (50MB) from [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare). This tarball includes pretrained models for ConvNet, LSTMnet, UNet, ViT, and ViT+LSTM (our best model).
 ```
 tar -xvf <path/to/pretrained_models.tar> -C models
 ```
@@ -101,17 +102,37 @@ Some details: Change `1` to any number of trials you'd like to run. If you look 
 
 The topic `/debug_img1` streams a depth image with an overlaid velocity vector arrow which indicates the model's output velocity command.
 
-## Train (simulation)
+## Train
 
-The training dataset is available as `data.zip` from the [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare). Unzip this data to wherever you'd like.
+#### Download and set up our dataset
 
-Each numerically-named folder within `data` contains an expert trajectory: `<timestamp>.png` files are depth images and `data.csv` stores velocity commands, orientations, and other information.
+The training dataset is available as `data.zip` (2.5GB, 3.4GB unzipped) from the [Datashare](https://upenn.app.box.com/v/ViT-quad-datashare). Make some necesary directories and unzip this data (this may take some time):
+```
+mkdir -p training/datasets/data training/logs
+unzip <path/to/data.zip> -d training/datasets/data
+```
 
-*Additional training instructions coming soon.*
+This dataset contains 580 trajectories in various sphere environments. Each numerically-named folder within `data` contains an expert trajectory of images and telemetry data. `<timestamp>.png` files are depth images and `data.csv` stores velocity commands, orientations, and other telemetry information.
 
-<!-- ## Baseline methods
+#### Train a model
 
-We compare our end-to-end learning models against some state-of-the-art classical, modular approaches. The code and instructions to run these baseline methods is coming soon. -->
+We provide a script `train.py` that trains a model on a given dataset, with arguments parsed from a config file. We provide `training/config/train.txt` with some default hyperparameters. Note that we have only confirmed functionality with a GPU. To train:
+```
+python training/train.py --config training/config/train.txt
+```
+
+You can monitor training and validation statistics with Tensorboard:
+```
+tensorboard --logdir training/logs
+```
+
+#### Gather your own dataset in simulation
+
+To create your own dataset, launch the simulation in state mode (after making any desired edits to the chosen environment, camera parameters, or environment switching behavior in the flightmare config file as described in the Test section) to run our simple, privileged expert policy. Note that this included look-ahead expert policy has a limited horizon and is not infallible, occasionally crashing into objects; however, it was used successfully for this paper.
+```
+bash launch_evaluation.bash 10 state
+```
+The saved depth images and telemetry get automatically stored in `envtest/ros/train_set` in a format readily usable for training. Move relevant trajectory folders to your new dataset directory. If you have previously cleared the `train_set` directory, you can do `mv envtest/ros/train_set/* training/datasets/new_dataset/`. Then, simple edit your config file `dataset = new_dataset` and run the training command as in the previous section.
 
 ## Real-world deployment
 
@@ -124,7 +145,7 @@ Run a Realsense D435 camera and the model inference node with:
 roslaunch depthfly depthfly.launch
 ```
 
-We include a `/trigger` signal that, when continuously published to, will route the predicted velocity commands to a given topic `/robot/cmd_vel`. We do this with the following terminal command. If you Ctl+C this command, the node will send velocity 0.0 commands to stop in place.
+We include a `/trigger` signal that, when continuously published to, will route the predicted velocity commands to a given topic `/robot/cmd_vel`. We do this with the following terminal command typically sent form a basestation computer. If you Ctl+C this command, the rosnode will send velocity 0.0 commands to stop in place.
 ```
 rostopic pub -r 50 /trigger std_msgs/Empty "{}"
 ```

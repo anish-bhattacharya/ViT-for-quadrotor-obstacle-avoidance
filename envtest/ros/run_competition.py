@@ -88,8 +88,7 @@ class AgilePilotNode:
         # load trained model here (copied over from user_code.py)
         if model_path is not None:
             print(f"[RUN_COMPETITION] Model loading from {model_path} ...")
-            is_LSTM = True
-            self.device = torch.device("cpu")
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             if model_type == 'LSTMNet':
                 self.model = LSTMNet().to(self.device).float()
             elif model_type == 'UNetLSTM':
