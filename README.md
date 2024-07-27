@@ -1,14 +1,12 @@
 # Vision Transformers (ViTs) for End-to-End Vision-Based Quadrotor Obstacle Avoidance
 
 **Updates:**
-
 *July 22, 2024 -- Full install, simulation testing, and real-world testing instructions/code available! Includes updates to setup files, launch_evaluation.bash, and to datashare files.*
-
 *July 25, 2024 -- Training instructions available, including details on using our provided dataset or gathering your own in simulation.*
 
 [Project page](https://www.anishbhattacharya.com/research/vit-depthfly)  &nbsp; [(Paper)](https://arxiv.org/abs/2405.10391)
 
-This is the official repository for the paper "Vision Transformers for End-to-End Vision-Based Quadrotor Obstacle Avoidance" by Bhattacharya, et al. (2024) from GRASP, Penn.
+This is the official repository for the paper "Vision Transformers for End-to-End Vision-Based Quadrotor Obstacle Avoidance" by Bhattacharya, et al. (2024) from GRASP, Penn. Please note that there is plenty of legacy and messy code throughout this repository, which will be refined in future releases.
 
 We demonstrate that vision transformers (ViTs) can be used for end-to-end perception-based obstacle avoidance for quadrotors equipped with a depth camera. We train policies that predict linear velocity commands to avoid static obstacles via behavior cloning from a privileged expert in a simple simulation environment, and show that ViT models combined with recurrence layers (LSTMs) outperform baseline methods based on other popular learning architectures. Deployed on a real quadrotor, our method achieves zero-shot dodging behavior at speeds reaching 7 m/s and on multi-obstacle environments.
 
@@ -100,9 +98,7 @@ The `launch_evaluation.bash` script launches Flightmare and the trained model fo
 bash launch_evaluation.bash 1 vision
 ```
 
-Some details: Change `1` to any number of trials you'd like to run. If you look at the bash script, you'll see multiple python scripts being run. `envtest/ros/evaluation_node.py` counts crashes, starts and aborts trials, and prints other statistics to the console. `envtest/ros/run_competition.py` subscribes to input depth images and passes them to the corresponding functions (located in `envtest/ros/user_code.py`) that run the model and return desired velocity commands. Please note that there is plenty of legacy and messy code throughout these scripts; we hope to clean this up soon, but this is not an actively maintained repository.
-
-The topic `/debug_img1` streams a depth image with an overlaid velocity vector arrow which indicates the model's output velocity command.
+Some details: Change `1` to any number of trials you'd like to run. If you look at the bash script, you'll see multiple python scripts being run. `envtest/ros/evaluation_node.py` counts crashes, starts and aborts trials, and prints other statistics to the console. `envtest/ros/run_competition.py` subscribes to input depth images and passes them to the corresponding functions (located in `envtest/ros/user_code.py`) that run the model and return desired velocity commands. The topic `/debug_img1` streams a depth image with an overlaid velocity vector arrow which indicates the model's output velocity command.
 
 ## Train
 
