@@ -4,7 +4,7 @@
 *July 22, 2024 -- Full install, simulation testing, and real-world testing instructions/code available! Includes updates to setup files, launch_evaluation.bash, and to datashare files.*
 *July 25, 2024 -- Training instructions available, including details on using our provided dataset or gathering your own in simulation.*
 
-[Project page](https://www.anishbhattacharya.com/research/vit-depthfly)  &nbsp; [(Paper)](https://arxiv.org/abs/2405.10391)
+[Project page](https://www.anishbhattacharya.com/research/vitfly)  &nbsp; [(Paper)](https://arxiv.org/abs/2405.10391)
 
 This is the official repository for the paper "Vision Transformers for End-to-End Vision-Based Quadrotor Obstacle Avoidance" by Bhattacharya, et al. (2024) from GRASP, Penn. Please note that there is plenty of legacy and messy code throughout this repository, which will be refined in future releases.
 
