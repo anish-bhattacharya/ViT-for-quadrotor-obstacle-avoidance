@@ -4,7 +4,8 @@
 *July 22, 2024 -- Full install, simulation testing, and real-world testing instructions/code available! Includes updates to setup files, launch_evaluation.bash, and to datashare files.*
 *July 25, 2024 -- Training instructions available, including details on using our provided dataset or gathering your own in simulation.*
 
-[Project page](https://www.anishbhattacharya.com/research/vitfly)  &nbsp; [(Paper)](https://arxiv.org/abs/2405.10391)
+[Project page](https://www.anishbhattacharya.com/research/vitfly)  &nbsp;
+[Paper](https://arxiv.org/abs/2405.10391)
 
 This is the official repository for the paper "Vision Transformers for End-to-End Vision-Based Quadrotor Obstacle Avoidance" by Bhattacharya, et al. (2024) from GRASP, Penn. Please note that there is plenty of legacy and messy code throughout this repository, which will be refined in future releases.
 
@@ -13,13 +14,13 @@ We demonstrate that vision transformers (ViTs) can be used for end-to-end percep
 <!-- GIFs -->
 
 #### Generalization to simulation environments 
-<img src="media/trees-vitlstm.gif" width="400" height="200"> <img src="media/walls-vitlstm.gif" width="250" height="200">
+<img src="media/sim-trees-vitlstm.gif" width="660" height="200"> <img src="media/sim-window-vitlstm.gif" width="250" height="200">
 
 #### Zero-shot transfer to multi-obstacle and high-speed, real-world dodging (GIFs not sped up)
 
-<img src="media/multi-obstacle-vitlstm.gif" width="300" height="200"> <img src="media/7ms-vitlstm.gif" width="380" height="200">
+<img src="media/multi-3d-3rdview.gif" width="300" height="200"> <img src="media/7ms-vitlstm.gif" width="380" height="200">
 
-<img src="media/multi-onboard-min.gif" width="300" height="200"> <img src="media/7ms-onboard-min.gif" width="380" height="200">
+<img src="media/multi-3d-onboard.gif" width="300" height="200"> <img src="media/7ms-onboard.gif" width="380" height="200">
 
 ## Installation
 
@@ -162,7 +163,7 @@ Please fly safely!
 ```
 @article{bhattacharya2024vision,
   title={Vision Transformers for End-to-End Vision-Based Quadrotor Obstacle Avoidance},
-  author={Bhattacharya, Anish and Rao, Nishanth and Parikh, Dhruv and Kunapuli, Pratik and Matni, Nikolai and Kumar, Vijay},
+  author={Bhattacharya, Anish and Rao, Nishanth and Parikh, Dhruv and Kunapuli, Pratik and Wu, Yuwei and Tao, Yuezhan and Matni, Nikolai and Kumar, Vijay},
   journal={arXiv preprint arXiv:2405.10391},
   year={2024}
 }
