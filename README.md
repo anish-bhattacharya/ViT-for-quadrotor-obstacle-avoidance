@@ -1,9 +1,5 @@
 # Vision Transformers (ViTs) for End-to-End Vision-Based Quadrotor Obstacle Avoidance
 
-**Updates:**
-*July 22, 2024 -- Full install, simulation testing, and real-world testing instructions/code available! Includes updates to setup files, launch_evaluation.bash, and to datashare files.*
-*July 25, 2024 -- Training instructions available, including details on using our provided dataset or gathering your own in simulation.*
-
 [Project page](https://www.anishbhattacharya.com/research/vitfly)  &nbsp;
 [Paper](https://arxiv.org/abs/2405.10391)
 
@@ -127,7 +123,7 @@ tensorboard --logdir training/logs
 
 #### Gather your own dataset in simulation
 
-To create your own dataset, launch the simulation in state mode (after making any desired edits to the chosen environment, camera parameters, or environment switching behavior in the flightmare config file as described in the Test section) to run our simple, privileged expert policy. Note that this included look-ahead expert policy has a limited horizon and is not infallible, occasionally crashing into objects; however, it was used successfully for this paper.
+To create your own dataset, launch the simulation in state mode (after making any desired edits to the chosen environment, camera parameters, or environment switching behavior in the flightmare config file as described in the Test section) to run our simple, privileged expert policy. Note that this included look-ahead expert policy has a limited horizon and may occasionally crash.
 ```
 bash launch_evaluation.bash 10 state
 ```
