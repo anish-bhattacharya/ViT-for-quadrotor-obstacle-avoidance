@@ -148,7 +148,7 @@ rostopic pub -r 50 /trigger std_msgs/Empty "{}"
 Some details:
 - Keep in mind the model is trained to continuously fly at the desired velocity and would require manual pilot takeover to stop.
 - Raw outputs of the node are published on `/output` topics.
-- Since it is assumed we are dodging vertical obstacles, we ignore z-velocity model commands and instead institute a p-gain controller to reach a desired height of 1.0 (line 159) (if you decide to accept z-commands from the model then ensure that you read robot odometry and maintain a minimum and maximum height).
+- For ease-of-use, z-velocity commands are currently set to maintain a constant flight altitude of 1m (line 159, `run.py`) but can be re-written to accept the model prediction `self.pred_vel[2]`.
 - We use a ramp-up in the `run()` function to smoothly accelerate the drone to the desired velocity over 2 seconds.
 - Velocity commands are published with respect to x-direction forward, y-direction left, and z-direction up.
 
