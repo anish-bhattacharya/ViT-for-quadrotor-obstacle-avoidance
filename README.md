@@ -1,4 +1,4 @@
-# Vision Transformers (ViTs) for End-to-End Vision-Based Quadrotor Obstacle Avoidance
+# Vision Transformers (ViTs) for End-to-End Vision-Based Quadrotor Obstacle Avoidance (ICRA 2025)
 
 [Project page](https://www.anishbhattacharya.com/research/vitfly)  &nbsp;
 [Paper](https://arxiv.org/abs/2405.10391)
