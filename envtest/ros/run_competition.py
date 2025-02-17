@@ -470,9 +470,9 @@ if __name__ == "__main__":
     parser.add_argument("--vision_based", help="Fly vision-based", required=False, dest="vision_based", action="store_true")
     parser.add_argument('--model_type', type=str, default='LSTMNet', help='string matching model name in lstmArch.py')
     parser.add_argument('--model_path', type=str, default=None, help='absolute path to model checkpoint')
-    parser.add_argument('--num_lstm_layers', type=float, default=None, help='number of lstm layers, needs to be passed in for some models like LSTMNetwFC')
+    parser.add_argument('--des_vel', type=float, default=None, help='desired velocity for quadrotor')
     parser.add_argument("--keyboard", help="Fly state-based mode but take velocity commands from keyboard WASD", required=False, dest="keyboard", action="store_true")
 
     args = parser.parse_args()
-    agile_pilot_node = AgilePilotNode(vision_based=args.vision_based, model_type=args.model_type, model_path=args.model_path, desVel=args.num_lstm_layers, keyboard=args.keyboard)
+    agile_pilot_node = AgilePilotNode(vision_based=args.vision_based, model_type=args.model_type, model_path=args.model_path, desVel=args.des_vel, keyboard=args.keyboard)
     rospy.spin()
